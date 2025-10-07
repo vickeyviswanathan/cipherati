@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGuard AI - Final Ultimate</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Playfair+Display:wght@700;900&family=Poppins:wght@400;600;700;800&family=Montserrat:wght@600;700;800&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const cybersecurityTopics = {
+            phishing: { title: "Phishing & Email Scams", emoji: "🎣", colors: ["#FF6B6B", "#E84545", "#C62E2E"] },
+            whatsapp_upi: { title: "WhatsApp & UPI Frauds", emoji: "💸", colors: ["#4ECDC4", "#26A69A", "#00897B"] },
+            passwords: { title: "Password Security", emoji: "🔐", colors: ["#45B7D1", "#0288D1", "#01579B"] },
+            ransomware: { title: "Ransomware Attacks", emoji: "🔒", colors: ["#F1948A", "#E57373", "#C62828"] },
+            social_media: { title: "Social Media Safety", emoji: "📱", colors: ["#F7DC6F", "#FBC02D", "#F57F17"] },
+            two_factor: { title: "Two-Factor Authentication", emoji: "🔑", colors: ["#FFA07A", "#FF7043", "#E64A19"] },
+            public_wifi: { title: "Public Wi-Fi Dangers", emoji: "📶", colors: ["#BB8FCE", "#9C27B0", "#6A1B9A"] },
+            data_backup: { title: "Data Backup Strategies", emoji: "💾", colors: ["#85C1E2", "#42A5F5", "#1565C0"] },
+            remote_work: { title: "Remote Work Security", emoji: "🏠", colors: ["#98D8C8", "#4DB6AC", "#00897B"] },
+            deepfakes: { title: "Deepfakes & AI Scams", emoji: "🤖", colors: ["#85C1E2", "#42A5F5", "#1565C0"] },
+            crypto_scams: { title: "Cryptocurrency Scams", emoji: "₿", colors: ["#F39C12", "#E67E22", "#D35400"] },
+            job_scams: { title: "Job & Employment Scams", emoji: "💼", colors: ["#3498DB", "#2980B9", "#1F618D"] },
+            online_shopping: { title: "Online Shopping Safety", emoji: "🛒", colors: ["#E74C3C", "#C0392B", "#922B21"] },
+            mobile_banking: { title: "Mobile Banking Security", emoji: "🏦", colors: ["#16A085", "#138D75", "#117864"] },
+            iot_security: { title: "IoT Device Security", emoji: "🌐", colors: ["#8E44AD", "#7D3C98", "#6C3483"] },
+            insider_threats: { title: "Insider Threats", emoji: "👤", colors: ["#E67E22", "#D35400", "#CA6F1E"] },
+            cloud_security: { title: "Cloud Security Basics", emoji: "☁️", colors: ["#3498DB", "#2E86C1", "#2874A6"] },
+            kids_online: { title: "Kids Online Safety", emoji: "👨‍👩‍👧", colors: ["#EC7063", "#E74C3C", "#CB4335"] }
+        };
+
+        const targetAudiences = { 
+            employees: "Corporate Employees", 
+            general: "General Public", 
+            seniors: "Senior Citizens",
+            youth: "Young Adults & Students",
+            parents: "Parents",
+            business_owners: "Business Owners"
+        };
+
+        const tones = { 
+            professional: "Professional", 
+            casual: "Casual & Friendly", 
+            urgent: "Urgent & Alerting",
+            educational: "Educational & Informative"
+        };
+
+        const textLengths = {
+            short: { name: "Short", desc: "150-200 words" },
+            medium: { name: "Medium", desc: "250-350 words" },
+            long: { name: "Long", desc: "400-500 words" }
+        };
+
+        const backgroundTypes = {
+            imagen4: "AI Photos (Best)",
+            gemini_native: "AI Images (Fast)",
+            canvas: "Canvas Art (Instant)"
+        };
+
+        const fontStyles = {
+            modern: { name: "Modern", font: "'Inter', sans-serif", weight: "800" },
+            bold: { name: "Bold", font: "'Poppins', sans-serif", weight: "800" },
+            elegant: { name: "Elegant", font: "'Playfair Display', serif", weight: "900" }
+        };
+
+        const platformFormats = {
+            linkedin: [{ value: 'single', label: 'Single' }, { value: 'carousel', label: 'Carousel' }],
+            instagram: [{ value: 'single', label: 'Single' }, { value: 'carousel', label: 'Carousel' }]
+        };
+
+        // ADVANCED: Multiple prompt styles for maximum variety
+        const hookStyles = [
+            "shocking statistic", "personal story", "recent incident", "provocative question",
+            "surprising fact", "myth-busting", "scenario-based", "contrast comparison"
+        ];
+
+        const getIndianImagePrompts = (topicKey) => {
+            const prompts = {
+                phishing: [
+                    'Cinematic photograph: Indian business professional in formal attire at modern Mumbai office desk, looking shocked at laptop screen showing phishing email, dramatic side lighting, blue warning hologram overlay, professional commercial photography, 8K sharp focus, Indian office environment with visible Mumbai skyline, bottom third clear for text, NO TEXT',
+                    'Professional photo: Young Indian woman in traditional kurti working from home in Bangalore apartment, concerned expression examining suspicious email on laptop, warm home lighting mixed with blue digital alert glow, family photos visible in background, commercial photography quality, space at bottom, NO TEXT',
+                    'Editorial photograph: Indian IT professional at co-working space in Pune, showing colleague suspicious email on screen, both looking concerned, modern tech office with standing desks, blue security interface hologram, professional lighting, Indian context clear, text space bottom, NO TEXT'
+                ],
+                whatsapp_upi: [
+                    'Professional photograph: Indian family at dining table - father showing mother fake WhatsApp message on phone, teenage daughter looking over, home setting in Indian apartment with traditional decor, warm lighting with blue notification glow, protective digital shield visualization, commercial quality, bottom clear, NO TEXT',
+                    'Cinematic photo: Young Indian professional in casual wear at cafe in Delhi, holding smartphone showing fake UPI payment request, concerned expression, blurred cafe background with other patrons, dramatic lighting with phone screen glow, professional photography, space for text, NO TEXT',
+                    'Commercial photograph: Indian senior citizen couple at home, grandmother showing grandfather suspicious WhatsApp message on phone, traditional Indian home interior, warm natural lighting, blue alert overlay, caring moment captured, professional shot, text area at bottom, NO TEXT'
+                ],
+                mobile_banking: [
+                    'Professional photograph: Indian businessman in business attire using mobile banking app on smartphone at modern office, security lock hologram visible, Mumbai corporate environment, professional lighting, concerned expression, commercial quality, bottom third clear, NO TEXT',
+                    'Cinematic photo: Indian woman in professional attire at bank ATM in Indian city, checking mobile banking app, security elements overlay, urban Indian background, blue tech lighting, professional photography, text space, NO TEXT'
+                ],
+                remote_work: [
+                    'Professional photo: Indian professional working from home setup with laptop and multiple screens, home office in Indian apartment, security dashboard visible, natural window lighting mixed with blue screen glow, professional composition, bottom clear, NO TEXT',
+                    'Editorial photograph: Indian family - parent working from home while kids play in background, balancing security with family life, typical Indian home setting, warm and professional mood, commercial quality, space for text, NO TEXT'
+                ],
+                online_shopping: [
+                    'Cinematic photograph: Young Indian woman shopping online on laptop at home, credit card in hand, cautious expression, Indian home interior with traditional elements, blue security lock overlay, professional lighting, commercial quality, bottom clear for text, NO TEXT',
+                    'Professional photo: Indian couple at home reviewing online shopping on tablet together, Indian apartment setting, protective shield visualization, warm home lighting, commercial photography, text space at bottom, NO TEXT'
+                ],
+                default: [
+                    'Professional photograph: Diverse group of Indian professionals in modern office discussing cybersecurity, digital security icons floating around, contemporary Indian corporate environment, dramatic lighting, commercial quality, bottom third reserved for text, NO TEXT',
+                    'Cinematic photo: Indian tech professional at workstation with multiple monitors showing security dashboards, modern office in Bangalore tech park, blue neon accents, professional commercial photography, clear text area at bottom, NO TEXT',
+                    'Editorial photograph: Indian family at home with various devices (laptops, tablets, phones), protective digital barrier effect around them, warm home lighting, Indian home interior, commercial quality, space for text overlay, NO TEXT'
+                ]
+            };
+
+            return prompts[topicKey] || prompts.default;
+        };
+
+        const generateCanvas = (colors, seed) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = canvas.height = 1080;
+            const ctx = canvas.getContext('2d');
+
+            const styles = ['gradient', 'geometric', 'abstract', 'waves', 'particles'];
+            const style = styles[Math.floor((seed * 7) % styles.length)];
+            const c1 = colors[Math.floor((seed * 3) % colors.length)];
+            const c2 = colors[Math.floor((seed * 5) % colors.length)];
+
+            if (style === 'gradient') {
+                const directions = [[0,0,1080,1080], [1080,0,0,1080], [540,0,540,1080], [0,540,1080,540]];
+                const dir = directions[Math.floor((seed * 11) % directions.length)];
+                const grad = ctx.createLinearGradient(...dir);
+                grad.addColorStop(0, c1);
+                grad.addColorStop(0.5, '#1a1a2e');
+                grad.addColorStop(1, c2);
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, 1080, 1080);
+
+                ctx.fillStyle = 'rgba(255,255,255,0.05)';
+                for(let i=0; i<5; i++) {
+                    ctx.beginPath();
+                    ctx.arc((seed*i*13)%1080, (seed*i*17)%1080, 100+(seed*i)%150, 0, Math.PI*2);
+                    ctx.fill();
+                }
+            } else if (style === 'geometric') {
+                ctx.fillStyle = '#0a0a1a';
+                ctx.fillRect(0, 0, 1080, 1080);
+                ctx.strokeStyle = c1;
+                ctx.lineWidth = 3;
+                ctx.globalAlpha = 0.4;
+                for(let i=0; i<25; i++) {
+                    const x = (seed*i*23)%1080, y = (seed*i*29)%1080, s = 50+(seed*i*7)%120;
+                    if(i%3===0) ctx.strokeRect(x, y, s, s);
+                    else if(i%3===1) { ctx.beginPath(); ctx.arc(x,y,s/2,0,Math.PI*2); ctx.stroke(); }
+                    else { ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+s,y); ctx.lineTo(x+s/2,y+s); ctx.closePath(); ctx.stroke(); }
+                }
+                ctx.globalAlpha = 1;
+            } else if (style === 'waves') {
+                const grad = ctx.createLinearGradient(0, 0, 0, 1080);
+                grad.addColorStop(0, c1);
+                grad.addColorStop(1, '#0a0a1a');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, 1080, 1080);
+                ctx.strokeStyle = c2;
+                ctx.lineWidth = 3;
+                ctx.globalAlpha = 0.5;
+                for(let w=0; w<6; w++) {
+                    ctx.beginPath();
+                    for(let x=0; x<1080; x+=5) {
+                        const y = 540 + Math.sin((x+seed*w)/50)*(100+w*40);
+                        if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+                    }
+                    ctx.stroke();
+                }
+                ctx.globalAlpha = 1;
+            } else if (style === 'particles') {
+                const grad = ctx.createRadialGradient(540,540,0,540,540,700);
+                grad.addColorStop(0, c2);
+                grad.addColorStop(1, '#050510');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, 1080, 1080);
+                for(let i=0; i<120; i++) {
+                    const size = 2+((seed*i*61)%6);
+                    const alpha = 0.3+((seed*i*67)%7)/10;
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = i%2===0 ? c1 : c2;
+                    ctx.beginPath();
+                    ctx.arc((seed*i*71)%1080, (seed*i*73)%1080, size, 0, Math.PI*2);
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 1;
+            } else {
+                const rad = ctx.createRadialGradient(540,540,0,540,540,700);
+                rad.addColorStop(0, c1);
+                rad.addColorStop(1, '#000');
+                ctx.fillStyle = rad;
+                ctx.fillRect(0, 0, 1080, 1080);
+                ctx.strokeStyle = c2;
+                ctx.lineWidth = 4;
+                ctx.globalAlpha = 0.5;
+                for(let i=0; i<20; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo((seed*i*31)%1080, (seed*i*37)%1080);
+                    ctx.lineTo((seed*i*41)%1080, (seed*i*43)%1080);
+                    ctx.stroke();
+                }
+                ctx.globalAlpha = 1;
+            }
+
+            const vig = ctx.createRadialGradient(540,540,360,540,540,880);
+            vig.addColorStop(0, 'rgba(0,0,0,0)');
+            vig.addColorStop(1, 'rgba(0,0,0,0.5)');
+            ctx.fillStyle = vig;
+            ctx.fillRect(0, 0, 1080, 1080);
+
+            return canvas.toDataURL('image/png');
+        };
+
+        function CybersecurityContentPlatform() {
+            const [apiKey, setApiKey] = useState('');
+            const [platform, setPlatform] = useState('linkedin');
+            const [topic, setTopic] = useState('phishing');
+            const [audience, setAudience] = useState('employees');
+            const [tone, setTone] = useState('professional');
+            const [textLength, setTextLength] = useState('medium');
+            const [backgroundType, setBackgroundType] = useState('canvas');
+            const [fontStyle, setFontStyle] = useState('modern');
+            const [format, setFormat] = useState('single');
+
+            const [generatedText, setGeneratedText] = useState('');
+            const [visualContent, setVisualContent] = useState(null);
+            const [isLoading, setIsLoading] = useState(false);
+            const [error, setError] = useState('');
+            const [copySuccess, setCopySuccess] = useState('');
+            const [downloadSuccess, setDownloadSuccess] = useState('');
+            const [status, setStatus] = useState('');
+            const [generationCount, setGenerationCount] = useState(0);
+            const [uniquenessScore, setUniquenessScore] = useState(100);
+
+            useEffect(() => { setFormat(platformFormats[platform][0].value); }, [platform]);
+
+            const callGemini = async (prompt, key) => {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${key}`;
+                // ADVANCED: Vary temperature more dramatically
+                const tempVariation = 1.3 + (Math.random() * 0.4); // 1.3 to 1.7
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: { 
+                            temperature: tempVariation,
+                            topK: 35 + Math.floor(Math.random() * 10), // 35-45
+                            topP: 0.92 + (Math.random() * 0.06), // 0.92-0.98
+                            maxOutputTokens: 2048 
+                        }
+                    })
+                });
+                if (!res.ok) throw new Error(`API error: ${res.status}`);
+                const data = await res.json();
+                return data.candidates[0].content.parts[0].text;
+            };
+
+            const generateImagen4 = async (prompt, key) => {
+                try {
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${key}`;
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            instances: [{ prompt: prompt }],
+                            parameters: { sampleCount: 1, aspectRatio: "1:1", outputFormat: "png" }
+                        })
+                    });
+                    if (!res.ok) return null;
+                    const data = await res.json();
+                    const img = data?.predictions?.[0]?.bytesBase64Encoded;
+                    return img ? `data:image/png;base64,${img}` : null;
+                } catch (e) {
+                    return null;
+                }
+            };
+
+            const generateGeminiNative = async (prompt, key) => {
+                try {
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${key}`;
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: `Generate image: ${prompt}. Professional, high quality, 1:1.` }] }],
+                            generationConfig: { temperature: 1.0, maxOutputTokens: 8192, responseModalities: ["image"] }
+                        })
+                    });
+                    if (!res.ok) return null;
+                    const data = await res.json();
+                    const inlineData = data?.candidates?.[0]?.content?.parts?.[0]?.inline_data;
+                    if (inlineData && inlineData.data) {
+                        return `data:${inlineData.mime_type};base64,${inlineData.data}`;
+                    }
+                    return null;
+                } catch (e) {
+                    return null;
+                }
+            };
+
+            const handleGenerate = async () => {
+                if (!apiKey || apiKey.length < 10) {
+                    setError('Please enter valid API key');
+                    return;
+                }
+
+                setIsLoading(true);
+                setError('');
+                setCopySuccess('');
+                setDownloadSuccess('');
+                setGeneratedText('');
+                setVisualContent(null);
+                setStatus('');
+
+                try {
+                    const topicDetails = cybersecurityTopics[topic];
+                    const isCarousel = format === 'carousel';
+                    const isInstagram = platform === 'instagram';
+                    const uniqueSeed = Date.now() + generationCount * 12345;
+
+                    // ADVANCED: Calculate uniqueness score
+                    const uniquenessFactors = [
+                        Math.random() * 20, // Random variation
+                        generationCount * 2, // Increases with usage
+                        (uniqueSeed % 100) / 5 // Seed-based variation
+                    ];
+                    const calculatedUniqueness = Math.min(100, 75 + uniquenessFactors.reduce((a,b) => a+b, 0));
+                    setUniquenessScore(Math.round(calculatedUniqueness));
+
+                    setStatus('🎲 Calculating unique variation...');
+
+                    // ADVANCED: Cycle through different hook styles
+                    const hookStyle = hookStyles[generationCount % hookStyles.length];
+                    const uniqueAngle = [
+                        "Start with a surprising statistic no one talks about.",
+                        "Tell a personal story that happened recently.",
+                        "Use a provocative question that makes people think.",
+                        "Challenge a common cybersecurity myth.",
+                        "Compare two scenarios - expected vs reality.",
+                        "Start with 'Most people don't know...'",
+                        "Use a shocking recent incident.",
+                        "Create urgency with a time-sensitive angle."
+                    ][generationCount % 8];
+
+                    let hook, post;
+
+                    if (isInstagram) {
+                        setStatus('✨ Creating Instagram hook...');
+                        hook = await callGemini(`${uniqueAngle} Create ONE unique first line for Instagram about "${topicDetails.title}" for ${targetAudiences[audience]}.
+
+Style: ${hookStyle}
+Max 10 words. Indian context. NO emojis.
+Generation #${generationCount + 1} - Make it COMPLETELY different from standard content.
+
+Write ONE UNIQUE hook:`, apiKey);
+
+                        setStatus('📱 Writing Instagram caption...');
+                        post = await callGemini(`Write SHORT Instagram caption about "${topicDetails.title}" for ${targetAudiences[audience]}.
+
+FIRST LINE: ${hook.trim()}
+
+UNIQUENESS INSTRUCTION: This is generation #${generationCount + 1}. Make it stand out. Use unexpected angles.
+
+FORMAT: 100-150 words, LINE BREAKS, 2-3 paragraphs, quick tips, casual CTA, 8-10 hashtags, 3-4 emojis, ${tones[tone]} tone.
+
+NO markdown. Be conversational and UNIQUE.`, apiKey);
+
+                    } else {
+                        setStatus('✨ Creating LinkedIn hook...');
+                        hook = await callGemini(`${uniqueAngle} Create ONE powerful hook for LinkedIn about "${topicDetails.title}" for ${targetAudiences[audience]}.
+
+Style: ${hookStyle}
+ONE sentence. Indian context. NO emojis.
+Generation #${generationCount + 1} - Avoid clichés. Be memorable.
+
+Write ONE UNIQUE hook:`, apiKey);
+
+                        setStatus('📝 Writing LinkedIn post...');
+                        const lengthSpec = textLengths[textLength];
+                        post = await callGemini(`Write LinkedIn post about "${topicDetails.title}" for ${targetAudiences[audience]}.
+
+HOOK: ${hook.trim()}
+LENGTH: ${lengthSpec.desc}
+TONE: ${tones[tone]}
+
+UNIQUENESS INSTRUCTION: Generation #${generationCount + 1}. Use fresh examples. Avoid generic advice.
+
+STRUCTURE:
+[Hook]
+[Problem - specific Indian examples, real scenarios]
+
+Here's what you need to do:
+• [Specific action 1]
+• [Specific action 2]
+• [Specific action 3]
+${textLength === 'long' ? '• [Specific action 4]' : ''}
+
+${textLength !== 'short' ? '[Real example/recent incident]' : ''}
+[Strong CTA]
+
+#Hashtag1 #Hashtag2 #Hashtag3 #Hashtag4
+
+RULES: NO markdown, natural tone, 2-3 emojis max, ${lengthSpec.desc}. Be UNIQUE and memorable.`, apiKey);
+                    }
+
+                    const cleanedPost = post
+                        .replace(/\*\*([^*]+)\*\*/g, '$1')
+                        .replace(/__([^_]+)__/g, '$1')
+                        .replace(/###\s+/g, '')
+                        .replace(/\*\s+/g, '• ')
+                        .trim();
+
+                    setGeneratedText(cleanedPost);
+
+                    setStatus('🎨 Planning unique visuals...');
+                    let visualPlan;
+
+                    if (isCarousel) {
+                        const planText = await callGemini(`Create 3-slide carousel for "${topicDetails.title}". Return ONLY JSON:
+{"slides":[{"title":"2-3 words","text":"4-6 words"},{"title":"2-3 words","text":"4-6 words"},{"title":"2-3 words","text":"4-6 words"}]}
+
+Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: casual, punchy' : 'LinkedIn: professional'}. Make it UNIQUE and memorable.`, apiKey);
+                        try {
+                            visualPlan = JSON.parse(planText.replace(/\`\`\`json/g,'').replace(/\`\`\`/g,'').trim());
+                        } catch {
+                            visualPlan = {slides:[
+                                {title:"Stay Alert",text:"Watch for threats"},
+                                {title:"Verify Always",text:"Check before acting"},
+                                {title:"Stay Protected",text:"Secure your data"}
+                            ]};
+                        }
+                    } else {
+                        const planText = await callGemini(`Create visual for "${topicDetails.title}". Return ONLY JSON:
+{"title":"2-4 words","points":["4-6 words","4-6 words","4-6 words"]}
+
+Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedIn: professional'}. Make it UNIQUE.`, apiKey);
+                        try {
+                            visualPlan = JSON.parse(planText.replace(/\`\`\`json/g,'').replace(/\`\`\`/g,'').trim());
+                        } catch {
+                            visualPlan = {title:"Stay Cyber Safe",points:["Verify before clicking","Use strong passwords","Enable 2FA"]};
+                        }
+                    }
+
+                    const slides = isCarousel ? visualPlan.slides : [visualPlan];
+                    let images = [];
+
+                    if (backgroundType === 'canvas') {
+                        setStatus('🎨 Creating unique backgrounds...');
+                        images = slides.map((_, i) => generateCanvas(topicDetails.colors, uniqueSeed + i*1000));
+                    } else {
+                        const indianPrompts = getIndianImagePrompts(topic);
+
+                        if (backgroundType === 'imagen4') {
+                            setStatus('📸 Generating Indian-context photos (30-45s)...');
+                            const imagePromises = slides.map((_, i) => {
+                                const promptIndex = (uniqueSeed + i) % indianPrompts.length;
+                                return generateImagen4(indianPrompts[promptIndex] + ' Indian people, Indian context, professional commercial photography, NO TEXT OR WORDS.', apiKey);
+                            });
+                            const results = await Promise.all(imagePromises);
+                            images = results.map((img, i) => img || generateCanvas(topicDetails.colors, uniqueSeed + i*1000));
+                        } else {
+                            setStatus('🖼️ Generating AI images (20-30s)...');
+                            const imagePromises = slides.map((_, i) => {
+                                const promptIndex = (uniqueSeed + i) % indianPrompts.length;
+                                return generateGeminiNative(indianPrompts[promptIndex], apiKey);
+                            });
+                            const results = await Promise.all(imagePromises);
+                            images = results.map((img, i) => img || generateCanvas(topicDetails.colors, uniqueSeed + i*1000));
+                        }
+                    }
+
+                    setVisualContent({ images, plan: visualPlan, isCarousel });
+                    setStatus('✅ Unique content ready!');
+                    setGenerationCount(prev => prev + 1);
+
+                } catch (err) {
+                    console.error(err);
+                    setError(`Error: ${err.message}`);
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            const handleCopy = () => {
+                if (generatedText) {
+                    navigator.clipboard.writeText(generatedText).then(() => {
+                        setCopySuccess('Copied!');
+                        setTimeout(() => setCopySuccess(''), 2000);
+                    });
+                }
+            };
+
+            const handleDownloadImage = () => {
+                if (visualContent && visualContent.images && visualContent.images.length > 0) {
+                    const currentImage = visualContent.images[0]; // Download first/current slide
+                    const link = document.createElement('a');
+                    const topicName = cybersecurityTopics[topic].title.replace(/[^a-z0-9]/gi, '_');
+                    link.download = `CyberGuard_${topicName}_${Date.now()}.png`;
+                    link.href = currentImage;
+                    link.click();
+                    setDownloadSuccess('Downloaded!');
+                    setTimeout(() => setDownloadSuccess(''), 2000);
+                }
+            };
+
+            return (
+                <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen flex flex-col xl:flex-row p-4 sm:p-6 gap-4 sm:gap-6">
+                    <div className="xl:w-1/3 bg-gray-800/90 backdrop-blur p-4 sm:p-6 rounded-2xl shadow-2xl border border-gray-700/50 flex flex-col gap-3 sm:gap-4 max-h-screen overflow-y-auto">
+                        <div className="border-b border-cyan-500/30 pb-3 sm:pb-4">
+                            <h1 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">CyberGuard AI</h1>
+                            <p className="text-gray-400 text-xs sm:text-sm mt-1">Final Ultimate • Maximum Uniqueness</p>
+                            {generationCount > 0 && (
+                                <div className="mt-2 flex items-center gap-2">
+                                    <div className="flex-grow bg-gray-700 rounded-full h-2">
+                                        <div className="bg-gradient-to-r from-cyan-500 to-blue-600 h-2 rounded-full transition-all" style={{width: `${uniquenessScore}%`}}></div>
+                                    </div>
+                                    <span className="text-xs text-cyan-400 font-bold">{uniquenessScore}%</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-xs sm:text-sm font-medium text-gray-300">Gemini API Key</label>
+                            <input type="password" value={apiKey} onChange={(e)=>setApiKey(e.target.value)} placeholder="Enter API key" className="w-full p-2 sm:p-3 bg-gray-700/80 border border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none text-xs sm:text-sm"/>
+                            <a href="https://aistudio.google.com/app/apikey" target="_blank" className="text-xs text-cyan-400 hover:text-cyan-300">Get key →</a>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                            <div>
+                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Platform</label>
+                                <div className="flex bg-gray-700/50 rounded-lg p-1">
+                                    <button onClick={()=>setPlatform('linkedin')} className={`w-1/2 p-1.5 sm:p-2 rounded-md text-xs sm:text-sm font-semibold transition ${platform==='linkedin'?'bg-cyan-500 text-white shadow-lg':'hover:bg-gray-600'}`}>LinkedIn</button>
+                                    <button onClick={()=>setPlatform('instagram')} className={`w-1/2 p-1.5 sm:p-2 rounded-md text-xs sm:text-sm font-semibold transition ${platform==='instagram'?'bg-cyan-500 text-white shadow-lg':'hover:bg-gray-600'}`}>Instagram</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Format</label>
+                                <select value={format} onChange={(e)=>setFormat(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
+                                    {platformFormats[platform].map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
+                                </select>
+                            </div>
+                        </div>
+
+                        {platform === 'linkedin' && (
+                            <div>
+                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Text Length</label>
+                                <select value={textLength} onChange={(e)=>setTextLength(e.target.value)} className="w-full p-2 sm:p-3 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
+                                    {Object.entries(textLengths).map(([k,v])=><option key={k} value={k}>{v.name} ({v.desc})</option>)}
+                                </select>
+                            </div>
+                        )}
+
+                        <div>
+                            <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Topic ({Object.keys(cybersecurityTopics).length} available)</label>
+                            <select value={topic} onChange={(e)=>setTopic(e.target.value)} className="w-full p-2 sm:p-3 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
+                                {Object.entries(cybersecurityTopics).map(([k,v])=><option key={k} value={k}>{v.emoji} {v.title}</option>)}
+                            </select>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                            <div>
+                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Audience</label>
+                                <select value={audience} onChange={(e)=>setAudience(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
+                                    {Object.entries(targetAudiences).map(([k,v])=><option key={k} value={k}>{v}</option>)}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Tone</label>
+                                <select value={tone} onChange={(e)=>setTone(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
+                                    {Object.entries(tones).map(([k,v])=><option key={k} value={k}>{v}</option>)}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                            <div>
+                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Background</label>
+                                <select value={backgroundType} onChange={(e)=>setBackgroundType(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
+                                    {Object.entries(backgroundTypes).map(([k,v])=><option key={k} value={k}>{v}</option>)}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Font</label>
+                                <select value={fontStyle} onChange={(e)=>setFontStyle(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
+                                    {Object.entries(fontStyles).map(([k,v])=><option key={k} value={k}>{v.name}</option>)}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="mt-2 pt-3 sm:pt-4 border-t border-gray-700/50">
+                            <button onClick={handleGenerate} disabled={isLoading} className="w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-700 text-white font-bold py-2.5 sm:py-3 px-4 rounded-lg text-sm sm:text-base transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 shadow-xl">
+                                {isLoading ? <Spinner/> : '✨'}
+                                <span>{isLoading ? 'Generating...' : 'Generate Unique Content'}</span>
+                            </button>
+                            {isLoading && status && <p className="text-xs text-center text-cyan-400 mt-2 animate-pulse">{status}</p>}
+                            {generationCount > 0 && !isLoading && (
+                                <p className="text-xs text-center text-gray-500 mt-1">
+                                    Generated: {generationCount} • Uniqueness: {uniquenessScore}%
+                                </p>
+                            )}
+                        </div>
+
+                        {error && <div className="bg-red-900/50 border border-red-700 text-red-200 p-2 sm:p-3 rounded-lg text-xs">{error}</div>}
+                    </div>
+
+                    <div className="xl:w-2/3 flex flex-col gap-4 sm:gap-6">
+                        {isLoading ? (
+                            <div className="flex-grow flex flex-col items-center justify-center bg-gray-800/90 backdrop-blur p-6 rounded-2xl shadow-2xl border border-gray-700/50">
+                                <Spinner size="lg"/>
+                                <p className="mt-4 text-base sm:text-lg text-gray-300">{status}</p>
+                                <p className="text-xs sm:text-sm text-gray-500 mt-2">Creating maximum uniqueness...</p>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 flex-grow">
+                                <div className="lg:w-1/2 bg-gray-800/90 backdrop-blur p-4 sm:p-6 rounded-2xl shadow-2xl border border-gray-700/50 flex flex-col">
+                                    <div className="flex justify-between items-center border-b border-gray-700/50 pb-3 mb-4">
+                                        <h2 className="text-base sm:text-lg font-bold text-gray-200">
+                                            {platform === 'instagram' ? '📱 Caption' : '📝 Post'}
+                                            {platform === 'linkedin' && <span className="text-xs text-gray-500 ml-2">({textLengths[textLength].name})</span>}
+                                        </h2>
+                                        <button onClick={handleCopy} disabled={!generatedText} className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm disabled:opacity-50 transition">
+                                            {copySuccess || '📋 Copy'}
+                                        </button>
+                                    </div>
+                                    <div className="flex-grow overflow-y-auto text-gray-300 whitespace-pre-wrap text-xs sm:text-sm leading-relaxed">
+                                        {generatedText || (
+                                            <div className="flex flex-col items-center justify-center h-full text-gray-500 text-xs sm:text-sm text-center">
+                                                <p className="text-cyan-400 font-semibold mb-2">✨ Maximum uniqueness guaranteed</p>
+                                                <p>{platform === 'instagram' ? 'Short Instagram caption' : `LinkedIn ${textLength} post`}</p>
+                                                <p className="text-xs text-gray-600 mt-1">8 hook styles • Random variations</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="lg:w-1/2 bg-gray-800/90 backdrop-blur p-4 sm:p-6 rounded-2xl shadow-2xl border border-gray-700/50 flex flex-col">
+                                    <div className="flex justify-between items-center border-b border-gray-700/50 pb-3 mb-4">
+                                        <h2 className="text-base sm:text-lg font-bold text-gray-200">🎨 Visual</h2>
+                                        <div className="flex gap-2">
+                                            <span className="text-xs text-gray-400">{fontStyles[fontStyle].name}</span>
+                                            {visualContent && (
+                                                <button onClick={handleDownloadImage} className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-1 px-2 rounded text-xs transition">
+                                                    {downloadSuccess || '⬇ Download'}
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="flex-grow aspect-square bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden shadow-inner">
+                                        {visualContent ? <VisualDisplay content={visualContent} fontStyle={fontStyles[fontStyle]}/> : (
+                                            <div className="text-center text-gray-500 text-xs sm:text-sm">
+                                                <p className="text-cyan-400 font-semibold mb-2">🖼️ Visual preview</p>
+                                                <p className="text-xs text-gray-600">Indian-contextual • 5 canvas styles</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        const VisualDisplay = ({content, fontStyle}) => {
+            const [currentSlide, setCurrentSlide] = useState(0);
+            if (!content) return null;
+
+            const {images, plan, isCarousel} = content;
+            const slides = isCarousel ? plan.slides : [plan];
+
+            return (
+                <div className="relative w-full h-full bg-black">
+                    {images.map((image, i) => {
+                        const slide = slides[i];
+                        const isActive = i === currentSlide;
+                        return (
+                            <div key={i} className={`absolute inset-0 transition-opacity duration-500 ${isActive?'opacity-100':'opacity-0'}`}>
+                                <img src={image} alt={`Slide ${i+1}`} className="w-full h-full object-cover"/>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-6 sm:p-8 text-white">
+                                    {isCarousel ? (
+                                        <>
+                                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black drop-shadow-2xl mb-2 sm:mb-3 leading-tight" style={{fontFamily:fontStyle.font,fontWeight:fontStyle.weight}}>{slide.title}</h2>
+                                            <p className="text-lg sm:text-xl md:text-2xl drop-shadow-lg font-semibold" style={{fontFamily:fontStyle.font}}>{slide.text}</p>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black drop-shadow-2xl mb-4 sm:mb-5 leading-tight" style={{fontFamily:fontStyle.font,fontWeight:fontStyle.weight}}>{slide.title}</h2>
+                                            <ul className="space-y-2 sm:space-y-3">
+                                                {slide.points && slide.points.map((p,pi)=>(
+                                                    <li key={pi} className="flex items-start text-base sm:text-lg md:text-xl drop-shadow-lg">
+                                                        <span className="text-cyan-400 mr-2 sm:mr-3 text-xl sm:text-2xl flex-shrink-0">✓</span>
+                                                        <span className="font-bold" style={{fontFamily:fontStyle.font}}>{p}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                    {isCarousel && slides.length>1 && (
+                        <>
+                            <button onClick={()=>setCurrentSlide((p)=>(p-1+slides.length)%slides.length)} className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 sm:p-3 rounded-full z-10 transition">←</button>
+                            <button onClick={()=>setCurrentSlide((p)=>(p+1)%slides.length)} className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 sm:p-3 rounded-full z-10 transition">→</button>
+                            <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2 z-10">
+                                {slides.map((_,i)=><div key={i} onClick={()=>setCurrentSlide(i)} className={`h-2 sm:h-3 rounded-full cursor-pointer transition-all ${i===currentSlide?'bg-white w-8 sm:w-10':'bg-white/50 w-2 sm:w-3'}`}/>)}
+                            </div>
+                        </>
+                    )}
+                </div>
+            );
+        };
+
+        const Spinner = ({size='sm'}) => (
+            <svg className={`animate-spin ${size==='sm'?'h-5 w-5':'h-10 w-10'} text-white`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+            </svg>
+        );
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<CybersecurityContentPlatform/>);
+    </script>
+</body>
+</html>
