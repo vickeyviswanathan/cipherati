@@ -52,8 +52,9 @@
             urgent: "Urgent & Alerting",
             educational: "Educational & Informative"
         };
-
+        
         const textLengths = {
+            pointers: { name: "Key Pointers", desc: "~100 words" },
             short: { name: "Short", desc: "150-200 words" },
             medium: { name: "Medium", desc: "250-350 words" },
             long: { name: "Long", desc: "400-500 words" }
@@ -76,43 +77,42 @@
             instagram: [{ value: 'single', label: 'Single' }, { value: 'carousel', label: 'Carousel' }]
         };
 
-        // ADVANCED: Multiple prompt styles for maximum variety
         const hookStyles = [
             "shocking statistic", "personal story", "recent incident", "provocative question",
             "surprising fact", "myth-busting", "scenario-based", "contrast comparison"
         ];
-
+        
         const getIndianImagePrompts = (topicKey) => {
+            const strictNoText = "All screens (laptops, phones) must be depicted as either glowing with an abstract pattern, showing generic code, or being slightly out of focus. Crucially, they must not contain any discernible text, letters, or logos. The entire image must contain absolutely NO TEXT, WORDS, or LETTERS."
             const prompts = {
                 phishing: [
-                    'Cinematic photograph: Indian business professional in formal attire at modern Mumbai office desk, looking shocked at laptop screen showing phishing email, dramatic side lighting, blue warning hologram overlay, professional commercial photography, 8K sharp focus, Indian office environment with visible Mumbai skyline, bottom third clear for text, NO TEXT',
-                    'Professional photo: Young Indian woman in traditional kurti working from home in Bangalore apartment, concerned expression examining suspicious email on laptop, warm home lighting mixed with blue digital alert glow, family photos visible in background, commercial photography quality, space at bottom, NO TEXT',
-                    'Editorial photograph: Indian IT professional at co-working space in Pune, showing colleague suspicious email on screen, both looking concerned, modern tech office with standing desks, blue security interface hologram, professional lighting, Indian context clear, text space bottom, NO TEXT'
+                    `Cinematic, dramatic shot: Close-up on the face of an Indian office worker in a dimly lit Mumbai high-rise office at night. His face is illuminated only by the glow of his laptop. Wide eyes, tense expression. High contrast, cinematic color grading. Bottom third is dark and clear for text overlay. ${strictNoText}`,
+                    `Tense, atmospheric photo: A young Indian woman in her Bangalore apartment, silhouette against the window. She holds her phone, screen glowing. The room is dark, creating a sense of isolation and vulnerability. Dramatic side lighting, shallow depth of field. Space for text at the bottom. ${strictNoText}`,
+                    `Dynamic angle shot: Low angle looking up at an Indian IT professional in Pune, pointing urgently at a monitor. His colleague looks on, shocked. Blue security holograms float in the air. Anamorphic lens flare, motion blur in background. Bottom is clear for text. ${strictNoText}`
                 ],
                 whatsapp_upi: [
-                    'Professional photograph: Indian family at dining table - father showing mother fake WhatsApp message on phone, teenage daughter looking over, home setting in Indian apartment with traditional decor, warm lighting with blue notification glow, protective digital shield visualization, commercial quality, bottom clear, NO TEXT',
-                    'Cinematic photo: Young Indian professional in casual wear at cafe in Delhi, holding smartphone showing fake UPI payment request, concerned expression, blurred cafe background with other patrons, dramatic lighting with phone screen glow, professional photography, space for text, NO TEXT',
-                    'Commercial photograph: Indian senior citizen couple at home, grandmother showing grandfather suspicious WhatsApp message on phone, traditional Indian home interior, warm natural lighting, blue alert overlay, caring moment captured, professional shot, text area at bottom, NO TEXT'
+                    `Cinematic still: An elderly Indian man sitting in a traditionally decorated living room, staring at his phone with a confused and worried expression. The phone screen is glowing brightly. Warm, low-key lighting with a single harsh light from the phone. Emotional and dramatic. Bottom of frame is dark for text. ${strictNoText}`,
+                    `Dramatic photo: A young Indian professional in a busy Delhi metro, phone in hand, looking concerned at the screen. The crowd is blurred, focusing on her moment of realization. High contrast, moody color grading. Clear space at bottom. ${strictNoText}`,
+                    `Tense family scene: An Indian family at the dinner table, the teenage daughter urgently showing her father a glowing phone screen. The father looks concerned. The scene is lit like a thriller film, with deep shadows and focused light on their faces. Highly cinematic. Text space at bottom. ${strictNoText}`
                 ],
                 mobile_banking: [
-                    'Professional photograph: Indian businessman in business attire using mobile banking app on smartphone at modern office, security lock hologram visible, Mumbai corporate environment, professional lighting, concerned expression, commercial quality, bottom third clear, NO TEXT',
-                    'Cinematic photo: Indian woman in professional attire at bank ATM in Indian city, checking mobile banking app, security elements overlay, urban Indian background, blue tech lighting, professional photography, text space, NO TEXT'
+                    `Cinematic close-up shot: An Indian woman’s hand holding a smartphone with a glowing screen. The background is a dark, abstract representation of digital code. High-tech, tense mood, dramatic lighting from the screen. Bottom third is clear for text. ${strictNoText}`,
+                    `High-contrast, dramatic photo: A businessman in a luxury car in Mumbai, looking stressed while looking at his phone. A digital, fractured security shield hologram is overlaid on the image, symbolizing a breach. Professional, cinematic lighting. Text space available at the bottom. ${strictNoText}`
                 ],
                 remote_work: [
-                    'Professional photo: Indian professional working from home setup with laptop and multiple screens, home office in Indian apartment, security dashboard visible, natural window lighting mixed with blue screen glow, professional composition, bottom clear, NO TEXT',
-                    'Editorial photograph: Indian family - parent working from home while kids play in background, balancing security with family life, typical Indian home setting, warm and professional mood, commercial quality, space for text, NO TEXT'
+                    `Atmospheric, cinematic photo: An Indian professional working late at a home office. The only light sources are the laptop screen and a desk lamp, casting long shadows. A glowing, digital lock icon hovers over the laptop, symbolizing security. Moody, serious, and professional. Bottom of the image is dark and clear for text. ${strictNoText}`,
+                    `Split-screen concept photo: Top half shows a serene Indian home office. Bottom half shows a chaotic, red-tinted visualization of cyber threats trying to break through a digital firewall. High-concept, dramatic, and cinematic. Clear text space at the bottom. ${strictNoText}`
                 ],
                 online_shopping: [
-                    'Cinematic photograph: Young Indian woman shopping online on laptop at home, credit card in hand, cautious expression, Indian home interior with traditional elements, blue security lock overlay, professional lighting, commercial quality, bottom clear for text, NO TEXT',
-                    'Professional photo: Indian couple at home reviewing online shopping on tablet together, Indian apartment setting, protective shield visualization, warm home lighting, commercial photography, text space at bottom, NO TEXT'
+                    `Cinematic, suspenseful shot: A young Indian woman at home, looking at her laptop with a concerned expression. The scene is lit to create suspense, with her face half in shadow. A feeling of imminent danger. Bottom of frame is clear for overlay. ${strictNoText}`,
+                    `Dramatic close-up: A hand holding a credit card, hovering over a laptop keyboard. The screen is glowing. Very shallow depth of field, focusing on the card details. High contrast, cinematic feel. Text space at bottom. ${strictNoText}`
                 ],
                 default: [
-                    'Professional photograph: Diverse group of Indian professionals in modern office discussing cybersecurity, digital security icons floating around, contemporary Indian corporate environment, dramatic lighting, commercial quality, bottom third reserved for text, NO TEXT',
-                    'Cinematic photo: Indian tech professional at workstation with multiple monitors showing security dashboards, modern office in Bangalore tech park, blue neon accents, professional commercial photography, clear text area at bottom, NO TEXT',
-                    'Editorial photograph: Indian family at home with various devices (laptops, tablets, phones), protective digital barrier effect around them, warm home lighting, Indian home interior, commercial quality, space for text overlay, NO TEXT'
+                    `Cinematic, abstract concept: A silhouette of an Indian person standing in a tunnel of glowing, blue digital code. Red, glitchy fragments represent incoming cyber threats. High-tech, dramatic, and visually stunning. Bottom third is clear and dark for text. ${strictNoText}`,
+                    `Dramatic portrait: A strong portrait of a diverse group of Indian professionals. Overlaid on the image are holographic security interfaces and data streams. They look determined and focused. Cinematic lighting, moody color grade. Clear text area at bottom. ${strictNoText}`,
+                    `High-concept cinematic shot: A single, glowing digital keyhole floating in a dark, empty space with an Indian city skyline faintly visible in the background. Symbolizes the fragility and importance of digital security. Minimalist, dramatic, powerful. Ample space for text at the bottom. ${strictNoText}`
                 ]
             };
-
             return prompts[topicKey] || prompts.default;
         };
 
@@ -236,13 +236,19 @@
             const [status, setStatus] = useState('');
             const [generationCount, setGenerationCount] = useState(0);
             const [uniquenessScore, setUniquenessScore] = useState(100);
+            const [currentSlide, setCurrentSlide] = useState(0);
 
             useEffect(() => { setFormat(platformFormats[platform][0].value); }, [platform]);
 
+            useEffect(() => {
+                if (visualContent) {
+                    setCurrentSlide(0);
+                }
+            }, [visualContent]);
+
             const callGemini = async (prompt, key) => {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${key}`;
-                // ADVANCED: Vary temperature more dramatically
-                const tempVariation = 1.3 + (Math.random() * 0.4); // 1.3 to 1.7
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${key}`;
+                const tempVariation = 1.3 + (Math.random() * 0.4); 
                 const res = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -250,20 +256,28 @@
                         contents: [{ parts: [{ text: prompt }] }],
                         generationConfig: { 
                             temperature: tempVariation,
-                            topK: 35 + Math.floor(Math.random() * 10), // 35-45
-                            topP: 0.92 + (Math.random() * 0.06), // 0.92-0.98
+                            topK: 35 + Math.floor(Math.random() * 10),
+                            topP: 0.92 + (Math.random() * 0.06), 
                             maxOutputTokens: 2048 
                         }
                     })
                 });
-                if (!res.ok) throw new Error(`API error: ${res.status}`);
+                if (!res.ok) throw new Error(`API error: ${res.status} ${res.statusText}`);
                 const data = await res.json();
+                
+                if (!data.candidates || data.candidates.length === 0) {
+                    if (data.promptFeedback && data.promptFeedback.blockReason) {
+                        return `Content generation failed because the prompt was blocked for: ${data.promptFeedback.blockReason}. Please try a different topic or adjust your settings.`;
+                    }
+                    return 'Content generation failed. The model returned an empty response. Please try again.';
+                }
+                
                 return data.candidates[0].content.parts[0].text;
             };
 
             const generateImagen4 = async (prompt, key) => {
                 try {
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${key}`;
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${key}`;
                     const res = await fetch(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -280,26 +294,37 @@
                     return null;
                 }
             };
-
+            
             const generateGeminiNative = async (prompt, key) => {
                 try {
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${key}`;
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${key}`;
                     const res = await fetch(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            contents: [{ parts: [{ text: `Generate image: ${prompt}. Professional, high quality, 1:1.` }] }],
-                            generationConfig: { temperature: 1.0, maxOutputTokens: 8192, responseModalities: ["image"] }
+                            contents: [{
+                                parts: [{ text: `Generate a photorealistic, professional, high-quality image for a cybersecurity awareness post, 1:1 aspect ratio. The scene should be: ${prompt}` }]
+                            }],
+                            generationConfig: {
+                                responseModalities: ["IMAGE"],
+                                temperature: 1.0,
+                                maxOutputTokens: 8192,
+                            }
                         })
                     });
-                    if (!res.ok) return null;
-                    const data = await res.json();
-                    const inlineData = data?.candidates?.[0]?.content?.parts?.[0]?.inline_data;
-                    if (inlineData && inlineData.data) {
-                        return `data:${inlineData.mime_type};base64,${inlineData.data}`;
+                     if (!res.ok) {
+                        console.error("Gemini Native API Error:", await res.text());
+                        return null;
                     }
+                    const data = await res.json();
+                    const inlineData = data?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData;
+                    if (inlineData && inlineData.data) {
+                        return `data:${inlineData.mimeType};base64,${inlineData.data}`;
+                    }
+                    console.error("No image data found in Gemini Native response", data);
                     return null;
                 } catch (e) {
+                    console.error("Error calling generateGeminiNative:", e);
                     return null;
                 }
             };
@@ -324,126 +349,118 @@
                     const isInstagram = platform === 'instagram';
                     const uniqueSeed = Date.now() + generationCount * 12345;
 
-                    // ADVANCED: Calculate uniqueness score
                     const uniquenessFactors = [
-                        Math.random() * 20, // Random variation
-                        generationCount * 2, // Increases with usage
-                        (uniqueSeed % 100) / 5 // Seed-based variation
+                        Math.random() * 20,
+                        generationCount * 2,
+                        (uniqueSeed % 100) / 5
                     ];
                     const calculatedUniqueness = Math.min(100, 75 + uniquenessFactors.reduce((a,b) => a+b, 0));
                     setUniquenessScore(Math.round(calculatedUniqueness));
 
                     setStatus('🎲 Calculating unique variation...');
 
-                    // ADVANCED: Cycle through different hook styles
                     const hookStyle = hookStyles[generationCount % hookStyles.length];
-                    const uniqueAngle = [
-                        "Start with a surprising statistic no one talks about.",
-                        "Tell a personal story that happened recently.",
-                        "Use a provocative question that makes people think.",
-                        "Challenge a common cybersecurity myth.",
-                        "Compare two scenarios - expected vs reality.",
-                        "Start with 'Most people don't know...'",
-                        "Use a shocking recent incident.",
-                        "Create urgency with a time-sensitive angle."
-                    ][generationCount % 8];
-
+                    
                     let hook, post;
 
                     if (isInstagram) {
-                        setStatus('✨ Creating Instagram hook...');
-                        hook = await callGemini(`${uniqueAngle} Create ONE unique first line for Instagram about "${topicDetails.title}" for ${targetAudiences[audience]}.
-
-Style: ${hookStyle}
-Max 10 words. Indian context. NO emojis.
-Generation #${generationCount + 1} - Make it COMPLETELY different from standard content.
-
+                        setStatus('✨ Creating unignorable hook...');
+                        hook = await callGemini(`Create ONE extremely compelling, unignorable hook for Instagram about "${topicDetails.title}" for ${targetAudiences[audience]}.
+Style: ${hookStyle}.
+Max 10 words. Indian context. NO emojis. It must create immediate intrigue or urgency.
+Generation #${generationCount + 1} - Make it BOLD and different.
 Write ONE UNIQUE hook:`, apiKey);
 
-                        setStatus('📱 Writing Instagram caption...');
-                        post = await callGemini(`Write SHORT Instagram caption about "${topicDetails.title}" for ${targetAudiences[audience]}.
-
+                        setStatus('📱 Writing powerful caption...');
+                        post = await callGemini(`Write a short, powerful Instagram caption about "${topicDetails.title}" for ${targetAudiences[audience]}.
 FIRST LINE: ${hook.trim()}
+UNIQUENESS INSTRUCTION: Generation #${generationCount + 1}. Use punchy, evocative language.
+FORMAT: 100-150 words, LINE BREAKS, 2-3 short paragraphs, quick tips, a strong CTA, 8-10 relevant hashtags, 3-4 emojis, ${tones[tone]} tone.
+NO markdown. Be conversational and high-impact.`, apiKey);
 
-UNIQUENESS INSTRUCTION: This is generation #${generationCount + 1}. Make it stand out. Use unexpected angles.
-
-FORMAT: 100-150 words, LINE BREAKS, 2-3 paragraphs, quick tips, casual CTA, 8-10 hashtags, 3-4 emojis, ${tones[tone]} tone.
-
-NO markdown. Be conversational and UNIQUE.`, apiKey);
-
-                    } else {
-                        setStatus('✨ Creating LinkedIn hook...');
-                        hook = await callGemini(`${uniqueAngle} Create ONE powerful hook for LinkedIn about "${topicDetails.title}" for ${targetAudiences[audience]}.
-
-Style: ${hookStyle}
-ONE sentence. Indian context. NO emojis.
-Generation #${generationCount + 1} - Avoid clichés. Be memorable.
-
+                    } else { // LinkedIn Logic
+                        setStatus('✨ Creating training-grade hook...');
+                        hook = await callGemini(`Create an extremely compelling, unignorable hook for a LinkedIn training post about "${topicDetails.title}" for ${targetAudiences[audience]}.
+Style: ${hookStyle}.
+The hook must create immediate intrigue or urgency, framing the topic as a critical business or personal skill. ONE powerful sentence. Indian context.
+Generation #${generationCount + 1}. Be bold and professional.
 Write ONE UNIQUE hook:`, apiKey);
 
-                        setStatus('📝 Writing LinkedIn post...');
+                        setStatus('📝 Crafting professional training content...');
                         const lengthSpec = textLengths[textLength];
-                        post = await callGemini(`Write LinkedIn post about "${topicDetails.title}" for ${targetAudiences[audience]}.
-
+                        let postPrompt;
+                        
+                        // REWRITTEN LINKEDIN PROMPTS FOR TRAINING-QUALITY CONTENT
+                        if (textLength === 'pointers') {
+                            postPrompt = `Act as a corporate cybersecurity trainer. Create a concise "micro-lesson" for a LinkedIn post about "${topicDetails.title}" for ${targetAudiences[audience]}.
 HOOK: ${hook.trim()}
-LENGTH: ${lengthSpec.desc}
-TONE: ${tones[tone]}
-
-UNIQUENESS INSTRUCTION: Generation #${generationCount + 1}. Use fresh examples. Avoid generic advice.
-
+FORMAT: A structured micro-lesson.
+TONE: Professional, educational, and authoritative.
 STRUCTURE:
 [Hook]
-[Problem - specific Indian examples, real scenarios]
-
-Here's what you need to do:
-• [Specific action 1]
-• [Specific action 2]
-• [Specific action 3]
-${textLength === 'long' ? '• [Specific action 4]' : ''}
-
-${textLength !== 'short' ? '[Real example/recent incident]' : ''}
-[Strong CTA]
-
-#Hashtag1 #Hashtag2 #Hashtag3 #Hashtag4
-
-RULES: NO markdown, natural tone, 2-3 emojis max, ${lengthSpec.desc}. Be UNIQUE and memorable.`, apiKey);
+**Objective:** [State the key learning outcome in one sentence. E.g., "To identify and neutralize deceptive payment requests."]
+**Key Threats:**
+- **[Threat 1]:** [Brief, clear description].
+- **[Threat 2]:** [Brief, clear description].
+**Actionable Steps:**
+1. **[Step 1]:** [A clear, direct action].
+2. **[Step 2]:** [A clear, direct action].
+[A strong, clear Call to Action encouraging proactive security.]
+#CyberSecurityTraining #${topic.replace(/_/g, '')} #CorporateTraining #India`;
+                        } else {
+                            postPrompt = `Act as a corporate cybersecurity trainer. Write an in-depth, training-quality LinkedIn post about "${topicDetails.title}" for ${targetAudiences[audience]}.
+HOOK: ${hook.trim()}
+LENGTH: ${lengthSpec.desc}
+TONE: ${tones[tone]}, authoritative, and educational.
+UNIQUENESS INSTRUCTION: Use a realistic case study to illustrate the threat.
+STRUCTURE:
+[Hook]
+**Case Study:** [Describe a brief but specific, realistic scenario. E.g., "An accountant at a firm in Bangalore receives a deceptive invoice from a cloned supplier email..."]
+**The Vulnerability:** [Explain the psychological trick or technical loophole the attackers exploited in the case study.]
+**Strategic Defense Plan:**
+1. **[Protective Measure 1]:** [Provide a tactical, actionable step. Explain the 'why' behind it.]
+2. **[Protective Measure 2]:** [Provide a tactical, actionable step. Explain the 'why' behind it.]
+3. **[Protective Measure 3]:** [Provide a tactical, actionable step. Explain the 'why' behind it.]
+${textLength !== 'short' ? `**Trainer's Insight:** [Provide a high-level strategic takeaway. E.g., "Attackers don't just hack systems; they hack human trust. The strongest defense is a culture of verification."]`: ''}
+[**Call to Action:** A question that prompts reflection or discussion on security practices.]
+#CyberSecurity #${topic.replace(/_/g, '')} #RiskManagement #ProfessionalDevelopment #India`;
+                        }
+                        post = await callGemini(postPrompt, apiKey);
                     }
 
                     const cleanedPost = post
-                        .replace(/\*\*([^*]+)\*\*/g, '$1')
-                        .replace(/__([^_]+)__/g, '$1')
-                        .replace(/###\s+/g, '')
-                        .replace(/\*\s+/g, '• ')
+                        .replace(/\*\*/g, '') // Remove double asterisks used for bolding
+                        .replace(/\*/g, '')   // Remove single asterisks for lists/emphasis
                         .trim();
 
                     setGeneratedText(cleanedPost);
 
-                    setStatus('🎨 Planning unique visuals...');
+                    setStatus('🎨 Planning cinematic visuals...');
                     let visualPlan;
 
-                    if (isCarousel) {
-                        const planText = await callGemini(`Create 3-slide carousel for "${topicDetails.title}". Return ONLY JSON:
-{"slides":[{"title":"2-3 words","text":"4-6 words"},{"title":"2-3 words","text":"4-6 words"},{"title":"2-3 words","text":"4-6 words"}]}
+                    const visualPlanContext = `Based on the following social media post, create a compelling visual summary. Post: "${cleanedPost}"`;
 
-Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: casual, punchy' : 'LinkedIn: professional'}. Make it UNIQUE and memorable.`, apiKey);
+                    if (isCarousel) {
+                        const planText = await callGemini(`${visualPlanContext} Create a 3-slide carousel. The text must be extremely short, punchy, and directly related to the post's main points. Return ONLY JSON:
+{"slides":[{"title":"2-3 words","text":"4-6 words"},{"title":"2-3 words","text":"4-6 words"},{"title":"2-3 words","text":"4-6 words"}]}
+Generation #${generationCount + 1}. Make it visually memorable and logically connected to the post.`, apiKey);
                         try {
                             visualPlan = JSON.parse(planText.replace(/\`\`\`json/g,'').replace(/\`\`\`/g,'').trim());
                         } catch {
                             visualPlan = {slides:[
-                                {title:"Stay Alert",text:"Watch for threats"},
-                                {title:"Verify Always",text:"Check before acting"},
-                                {title:"Stay Protected",text:"Secure your data"}
+                                {title:"Threats Evolve",text:"So should your defense"},
+                                {title:"Doubt Everything",text:"Verify before you trust"},
+                                {title:"You Are The Shield",text:"Your actions matter most"}
                             ]};
                         }
                     } else {
-                        const planText = await callGemini(`Create visual for "${topicDetails.title}". Return ONLY JSON:
-{"title":"2-4 words","points":["4-6 words","4-6 words","4-6 words"]}
-
-Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedIn: professional'}. Make it UNIQUE.`, apiKey);
+                        const planText = await callGemini(`${visualPlanContext} Create a single visual concept. The title and points must summarize the most critical advice from the post. Return ONLY JSON:
+{"title":"2-4 POWERFUL words","points":["4-6 impactful words","4-6 impactful words","4-6 impactful words"]}
+Generation #${generationCount + 1}. Make it memorable and directly relevant.`, apiKey);
                         try {
                             visualPlan = JSON.parse(planText.replace(/\`\`\`json/g,'').replace(/\`\`\`/g,'').trim());
                         } catch {
-                            visualPlan = {title:"Stay Cyber Safe",points:["Verify before clicking","Use strong passwords","Enable 2FA"]};
+                            visualPlan = {title:"DEFEND YOUR DIGITAL",points:["Think before the click","Strong passkeys are essential","MFA is not optional"]};
                         }
                     }
 
@@ -451,20 +468,19 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
                     let images = [];
 
                     if (backgroundType === 'canvas') {
-                        setStatus('🎨 Creating unique backgrounds...');
+                        setStatus('🎨 Creating artistic backgrounds...');
                         images = slides.map((_, i) => generateCanvas(topicDetails.colors, uniqueSeed + i*1000));
                     } else {
                         const indianPrompts = getIndianImagePrompts(topic);
-
                         if (backgroundType === 'imagen4') {
-                            setStatus('📸 Generating Indian-context photos (30-45s)...');
+                            setStatus('📸 Generating cinematic photos (30-45s)...');
                             const imagePromises = slides.map((_, i) => {
                                 const promptIndex = (uniqueSeed + i) % indianPrompts.length;
-                                return generateImagen4(indianPrompts[promptIndex] + ' Indian people, Indian context, professional commercial photography, NO TEXT OR WORDS.', apiKey);
+                                return generateImagen4(indianPrompts[promptIndex], apiKey);
                             });
                             const results = await Promise.all(imagePromises);
                             images = results.map((img, i) => img || generateCanvas(topicDetails.colors, uniqueSeed + i*1000));
-                        } else {
+                        } else { // gemini_native
                             setStatus('🖼️ Generating AI images (20-30s)...');
                             const imagePromises = slides.map((_, i) => {
                                 const promptIndex = (uniqueSeed + i) % indianPrompts.length;
@@ -476,7 +492,7 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
                     }
 
                     setVisualContent({ images, plan: visualPlan, isCarousel });
-                    setStatus('✅ Unique content ready!');
+                    setStatus('✅ Training content ready!');
                     setGenerationCount(prev => prev + 1);
 
                 } catch (err) {
@@ -496,16 +512,101 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
                 }
             };
 
-            const handleDownloadImage = () => {
-                if (visualContent && visualContent.images && visualContent.images.length > 0) {
-                    const currentImage = visualContent.images[0]; // Download first/current slide
+            const handleDownloadImage = async () => {
+                if (!visualContent || !visualContent.images || visualContent.images.length === 0) return;
+
+                setDownloadSuccess('Preparing...');
+
+                try {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 1080;
+                    canvas.height = 1080;
+                    const ctx = canvas.getContext('2d');
+
+                    const { images, plan, isCarousel } = visualContent;
+                    const currentImageSrc = images[currentSlide];
+                    const currentPlan = isCarousel ? plan.slides[currentSlide] : plan;
+                    const currentFontStyle = fontStyles[fontStyle];
+
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    img.src = currentImageSrc;
+                    await new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = (e) => reject(new Error("Image failed to load for download canvas."));
+                    });
+                    
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    const gradient = ctx.createLinearGradient(0, canvas.height, 0, canvas.height / 2);
+                    gradient.addColorStop(0, 'rgba(0,0,0,0.9)');
+                    gradient.addColorStop(0.7, 'rgba(0,0,0,0.4)');
+                    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    ctx.fillStyle = 'white';
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+                    ctx.shadowBlur = 10;
+                    ctx.shadowOffsetY = 2;
+
+                    const padding = 80;
+                    const contentWidth = canvas.width - (padding * 2);
+
+                    const wrapText = (context, text, x, y, maxWidth, lineHeight) => {
+                        const words = text.split(' ');
+                        let line = '';
+                        let currentY = y;
+                        for (let n = 0; n < words.length; n++) {
+                            const testLine = line + words[n] + ' ';
+                            const metrics = context.measureText(testLine);
+                            if (metrics.width > maxWidth && n > 0) {
+                                context.fillText(line, x, currentY);
+                                line = words[n] + ' ';
+                                currentY += lineHeight;
+                            } else {
+                                line = testLine;
+                            }
+                        }
+                        context.fillText(line, x, currentY);
+                        return currentY - y + lineHeight;
+                    };
+
+
+                    if (isCarousel) {
+                        ctx.font = `600 52px ${currentFontStyle.font}`;
+                        const textHeight = wrapText(ctx, currentPlan.text, padding, canvas.height - padding - 62, contentWidth, 62);
+                        
+                        ctx.font = `${currentFontStyle.weight} 95px ${currentFontStyle.font}`;
+                        wrapText(ctx, currentPlan.title, padding, canvas.height - padding - textHeight - 40, contentWidth, 105);
+                    } else {
+                        const points = currentPlan.points || [];
+                        let yPos = canvas.height - padding;
+
+                        ctx.font = `600 42px ${currentFontStyle.font}`;
+                        [...points].reverse().forEach(point => {
+                            const pointText = `✓  ${point}`;
+                            const textHeight = wrapText(ctx, pointText, padding, yPos - 42, contentWidth, 50);
+                            yPos -= (textHeight + 20); 
+                        });
+                        
+                        yPos -= 40;
+
+                        ctx.font = `${currentFontStyle.weight} 90px ${currentFontStyle.font}`;
+                        wrapText(ctx, currentPlan.title, padding, yPos - 100, contentWidth, 100);
+                    }
+
                     const link = document.createElement('a');
-                    const topicName = cybersecurityTopics[topic].title.replace(/[^a-z0-9]/gi, '_');
+                    const topicName = cybersecurityTopics[topic].title.replace(/[^a-z0,9]/gi, '_');
                     link.download = `CyberGuard_${topicName}_${Date.now()}.png`;
-                    link.href = currentImage;
+                    link.href = canvas.toDataURL('image/png');
                     link.click();
                     setDownloadSuccess('Downloaded!');
                     setTimeout(() => setDownloadSuccess(''), 2000);
+                } catch (e) {
+                    console.error("Failed to create image for download:", e);
+                    setError('Download failed. Please try another background.');
+                    setDownloadSuccess('');
                 }
             };
 
@@ -514,7 +615,7 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
                     <div className="xl:w-1/3 bg-gray-800/90 backdrop-blur p-4 sm:p-6 rounded-2xl shadow-2xl border border-gray-700/50 flex flex-col gap-3 sm:gap-4 max-h-screen overflow-y-auto">
                         <div className="border-b border-cyan-500/30 pb-3 sm:pb-4">
                             <h1 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">CyberGuard AI</h1>
-                            <p className="text-gray-400 text-xs sm:text-sm mt-1">Final Ultimate • Maximum Uniqueness</p>
+                            <p className="text-gray-400 text-xs sm:text-sm mt-1">Professional Cybersecurity Training Content</p>
                             {generationCount > 0 && (
                                 <div className="mt-2 flex items-center gap-2">
                                     <div className="flex-grow bg-gray-700 rounded-full h-2">
@@ -549,7 +650,7 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
 
                         {platform === 'linkedin' && (
                             <div>
-                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Text Length</label>
+                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Content Length</label>
                                 <select value={textLength} onChange={(e)=>setTextLength(e.target.value)} className="w-full p-2 sm:p-3 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
                                     {Object.entries(textLengths).map(([k,v])=><option key={k} value={k}>{v.name} ({v.desc})</option>)}
                                 </select>
@@ -557,7 +658,7 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
                         )}
 
                         <div>
-                            <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Topic ({Object.keys(cybersecurityTopics).length} available)</label>
+                            <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Training Topic ({Object.keys(cybersecurityTopics).length} available)</label>
                             <select value={topic} onChange={(e)=>setTopic(e.target.value)} className="w-full p-2 sm:p-3 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
                                 {Object.entries(cybersecurityTopics).map(([k,v])=><option key={k} value={k}>{v.emoji} {v.title}</option>)}
                             </select>
@@ -565,13 +666,13 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
 
                         <div className="grid grid-cols-2 gap-2 sm:gap-3">
                             <div>
-                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Audience</label>
+                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Target Audience</label>
                                 <select value={audience} onChange={(e)=>setAudience(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
                                     {Object.entries(targetAudiences).map(([k,v])=><option key={k} value={k}>{v}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Tone</label>
+                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Tone of Voice</label>
                                 <select value={tone} onChange={(e)=>setTone(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
                                     {Object.entries(tones).map(([k,v])=><option key={k} value={k}>{v}</option>)}
                                 </select>
@@ -580,13 +681,13 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
 
                         <div className="grid grid-cols-2 gap-2 sm:gap-3">
                             <div>
-                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Background</label>
+                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Visual Style</label>
                                 <select value={backgroundType} onChange={(e)=>setBackgroundType(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
                                     {Object.entries(backgroundTypes).map(([k,v])=><option key={k} value={k}>{v}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Font</label>
+                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Font Style</label>
                                 <select value={fontStyle} onChange={(e)=>setFontStyle(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
                                     {Object.entries(fontStyles).map(([k,v])=><option key={k} value={k}>{v.name}</option>)}
                                 </select>
@@ -596,12 +697,12 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
                         <div className="mt-2 pt-3 sm:pt-4 border-t border-gray-700/50">
                             <button onClick={handleGenerate} disabled={isLoading} className="w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-700 text-white font-bold py-2.5 sm:py-3 px-4 rounded-lg text-sm sm:text-base transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 shadow-xl">
                                 {isLoading ? <Spinner/> : '✨'}
-                                <span>{isLoading ? 'Generating...' : 'Generate Unique Content'}</span>
+                                <span>{isLoading ? 'Generating...' : 'Generate Training Content'}</span>
                             </button>
                             {isLoading && status && <p className="text-xs text-center text-cyan-400 mt-2 animate-pulse">{status}</p>}
                             {generationCount > 0 && !isLoading && (
                                 <p className="text-xs text-center text-gray-500 mt-1">
-                                    Generated: {generationCount} • Uniqueness: {uniquenessScore}%
+                                    Content Generated: {generationCount}
                                 </p>
                             )}
                         </div>
@@ -614,14 +715,14 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
                             <div className="flex-grow flex flex-col items-center justify-center bg-gray-800/90 backdrop-blur p-6 rounded-2xl shadow-2xl border border-gray-700/50">
                                 <Spinner size="lg"/>
                                 <p className="mt-4 text-base sm:text-lg text-gray-300">{status}</p>
-                                <p className="text-xs sm:text-sm text-gray-500 mt-2">Creating maximum uniqueness...</p>
+                                <p className="text-xs sm:text-sm text-gray-500 mt-2">Crafting professional training material...</p>
                             </div>
                         ) : (
                             <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 flex-grow">
                                 <div className="lg:w-1/2 bg-gray-800/90 backdrop-blur p-4 sm:p-6 rounded-2xl shadow-2xl border border-gray-700/50 flex flex-col">
                                     <div className="flex justify-between items-center border-b border-gray-700/50 pb-3 mb-4">
                                         <h2 className="text-base sm:text-lg font-bold text-gray-200">
-                                            {platform === 'instagram' ? '📱 Caption' : '📝 Post'}
+                                            {platform === 'instagram' ? '📱 Caption' : '📝 Training Post'}
                                             {platform === 'linkedin' && <span className="text-xs text-gray-500 ml-2">({textLengths[textLength].name})</span>}
                                         </h2>
                                         <button onClick={handleCopy} disabled={!generatedText} className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm disabled:opacity-50 transition">
@@ -631,9 +732,9 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
                                     <div className="flex-grow overflow-y-auto text-gray-300 whitespace-pre-wrap text-xs sm:text-sm leading-relaxed">
                                         {generatedText || (
                                             <div className="flex flex-col items-center justify-center h-full text-gray-500 text-xs sm:text-sm text-center">
-                                                <p className="text-cyan-400 font-semibold mb-2">✨ Maximum uniqueness guaranteed</p>
-                                                <p>{platform === 'instagram' ? 'Short Instagram caption' : `LinkedIn ${textLength} post`}</p>
-                                                <p className="text-xs text-gray-600 mt-1">8 hook styles • Random variations</p>
+                                                <p className="text-cyan-400 font-semibold mb-2">🎓 Professional Training Content</p>
+                                                <p>Your expert cybersecurity content will appear here.</p>
+                                                <p className="text-xs text-gray-600 mt-1">Case studies • Actionable advice • Trainer insights</p>
                                             </div>
                                         )}
                                     </div>
@@ -641,21 +742,26 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
 
                                 <div className="lg:w-1/2 bg-gray-800/90 backdrop-blur p-4 sm:p-6 rounded-2xl shadow-2xl border border-gray-700/50 flex flex-col">
                                     <div className="flex justify-between items-center border-b border-gray-700/50 pb-3 mb-4">
-                                        <h2 className="text-base sm:text-lg font-bold text-gray-200">🎨 Visual</h2>
-                                        <div className="flex gap-2">
+                                        <h2 className="text-base sm:text-lg font-bold text-gray-200">🎨 Training Visual</h2>
+                                        <div className="flex gap-2 items-center">
                                             <span className="text-xs text-gray-400">{fontStyles[fontStyle].name}</span>
                                             {visualContent && (
-                                                <button onClick={handleDownloadImage} className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-1 px-2 rounded text-xs transition">
+                                                <button onClick={handleDownloadImage} disabled={downloadSuccess === 'Preparing...'} className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-1 px-2 rounded text-xs transition disabled:opacity-50">
                                                     {downloadSuccess || '⬇ Download'}
                                                 </button>
                                             )}
                                         </div>
                                     </div>
                                     <div className="flex-grow aspect-square bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden shadow-inner">
-                                        {visualContent ? <VisualDisplay content={visualContent} fontStyle={fontStyles[fontStyle]}/> : (
+                                        {visualContent ? <VisualDisplay 
+                                            content={visualContent} 
+                                            fontStyle={fontStyles[fontStyle]}
+                                            currentSlide={currentSlide}
+                                            setCurrentSlide={setCurrentSlide}
+                                        /> : (
                                             <div className="text-center text-gray-500 text-xs sm:text-sm">
                                                 <p className="text-cyan-400 font-semibold mb-2">🖼️ Visual preview</p>
-                                                <p className="text-xs text-gray-600">Indian-contextual • 5 canvas styles</p>
+                                                <p className="text-xs text-gray-600">Visuals will be generated here.</p>
                                             </div>
                                         )}
                                     </div>
@@ -667,8 +773,7 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
             );
         }
 
-        const VisualDisplay = ({content, fontStyle}) => {
-            const [currentSlide, setCurrentSlide] = useState(0);
+        const VisualDisplay = ({content, fontStyle, currentSlide, setCurrentSlide}) => {
             if (!content) return null;
 
             const {images, plan, isCarousel} = content;
@@ -680,32 +785,33 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
                         const slide = slides[i];
                         const isActive = i === currentSlide;
                         return (
-                            <div key={i} className={`absolute inset-0 transition-opacity duration-500 ${isActive?'opacity-100':'opacity-0'}`}>
+                            <div key={i} className={`absolute inset-0 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
                                 <img src={image} alt={`Slide ${i+1}`} className="w-full h-full object-cover"/>
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-6 sm:p-8 text-white">
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent" />
+                                <div className="absolute inset-0 flex flex-col justify-end p-8 sm:p-10 text-white">
                                     {isCarousel ? (
-                                        <>
-                                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black drop-shadow-2xl mb-2 sm:mb-3 leading-tight" style={{fontFamily:fontStyle.font,fontWeight:fontStyle.weight}}>{slide.title}</h2>
-                                            <p className="text-lg sm:text-xl md:text-2xl drop-shadow-lg font-semibold" style={{fontFamily:fontStyle.font}}>{slide.text}</p>
-                                        </>
+                                        <div className="mb-10 drop-shadow-lg">
+                                            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-3 leading-tight" style={{fontFamily:fontStyle.font,fontWeight:fontStyle.weight}}>{slide.title}</h2>
+                                            <p className="text-xl sm:text-2xl md:text-3xl font-semibold" style={{fontFamily:fontStyle.font}}>{slide.text}</p>
+                                        </div>
                                     ) : (
-                                        <>
-                                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black drop-shadow-2xl mb-4 sm:mb-5 leading-tight" style={{fontFamily:fontStyle.font,fontWeight:fontStyle.weight}}>{slide.title}</h2>
-                                            <ul className="space-y-2 sm:space-y-3">
+                                         <div className="mb-6 drop-shadow-lg">
+                                            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-5 leading-tight" style={{fontFamily:fontStyle.font,fontWeight:fontStyle.weight}}>{slide.title}</h2>
+                                            <ul className="space-y-3">
                                                 {slide.points && slide.points.map((p,pi)=>(
-                                                    <li key={pi} className="flex items-start text-base sm:text-lg md:text-xl drop-shadow-lg">
-                                                        <span className="text-cyan-400 mr-2 sm:mr-3 text-xl sm:text-2xl flex-shrink-0">✓</span>
-                                                        <span className="font-bold" style={{fontFamily:fontStyle.font}}>{p}</span>
+                                                    <li key={pi} className="flex items-center text-lg sm:text-xl md:text-2xl">
+                                                        <span className="text-cyan-400 mr-3 text-2xl sm:text-3xl flex-shrink-0">✓</span>
+                                                        <span className="font-semibold" style={{fontFamily:fontStyle.font}}>{p}</span>
                                                     </li>
                                                 ))}
                                             </ul>
-                                        </>
+                                        </div>
                                     )}
                                 </div>
                             </div>
                         );
                     })}
-                    {isCarousel && slides.length>1 && (
+                    {isCarousel && slides.length > 1 && (
                         <>
                             <button onClick={()=>setCurrentSlide((p)=>(p-1+slides.length)%slides.length)} className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 sm:p-3 rounded-full z-10 transition">←</button>
                             <button onClick={()=>setCurrentSlide((p)=>(p+1)%slides.length)} className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 sm:p-3 rounded-full z-10 transition">→</button>
@@ -730,3 +836,4 @@ Generation #${generationCount + 1}. ${isInstagram ? 'Instagram: bold' : 'LinkedI
     </script>
 </body>
 </html>
+
