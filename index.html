@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Playfair+Display:wght@700;900&family=Poppins:wght@400;600;700;800&family=Montserrat:wght@600;700;800&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
     <div id="root"></div>
@@ -23,6 +24,7 @@
             social_media: { title: "Social Media Safety", emoji: "📱", colors: ["#F7DC6F", "#FBC02D", "#F57F17"] },
             two_factor: { title: "Two-Factor Authentication", emoji: "🔑", colors: ["#FFA07A", "#FF7043", "#E64A19"] },
             deepfakes: { title: "Deepfakes & AI Scams", emoji: "🤖", colors: ["#85C1E2", "#42A5F5", "#1565C0"] },
+            real_scam: { title: "Real Scam (from Web)", emoji: "📰", colors: ["#5D6D7E", "#34495E", "#2C3E50"] },
         };
 
         const targetAudiences = { 
@@ -30,13 +32,6 @@
             general: "General Public", 
             seniors: "Senior Citizens",
             youth: "Young Adults & Students",
-        };
-
-        const tones = { 
-            professional: "Professional", 
-            casual: "Casual & Friendly", 
-            urgent: "Urgent & Alerting",
-            educational: "Educational & Informative"
         };
         
         const genericTextLengths = {
@@ -81,9 +76,7 @@
             const [apiKey, setApiKey] = useState('');
             const [platform, setPlatform] = useState('linkedin');
             const [topic, setTopic] = useState('phishing');
-            const [audience, setAudience] = useState('employees');
             const [contentType, setContentType] = useState('generic');
-            const [tone, setTone] = useState('professional');
             const [textLength, setTextLength] = useState('briefing');
             const [backgroundType, setBackgroundType] = useState('cinematic');
             
@@ -94,6 +87,7 @@
             const [copySuccess, setCopySuccess] = useState('');
             const [downloadSuccess, setDownloadSuccess] = useState('');
             const [status, setStatus] = useState('');
+            const [currentSlide, setCurrentSlide] = useState(0);
 
             useEffect(() => {
                  const currentLengths = contentType === 'technical' ? technicalTextLengths : genericTextLengths;
@@ -102,19 +96,30 @@
                 }
             }, [contentType, textLength]);
 
+            useEffect(() => {
+                if (visualContent) {
+                    setCurrentSlide(0);
+                }
+            }, [visualContent]);
+
             const callGemini = async (prompt, key, isJson = false) => {
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${key}`;
+                const body = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { 
+                        temperature: 1.3,
+                        maxOutputTokens: 8192,
+                    }
+                };
+                if(isJson) body.generationConfig.responseMimeType = "application/json";
+                if(topic === 'real_scam' && !isJson) {
+                    body.tools = [{ "google_search": {} }];
+                }
+
                 const res = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }],
-                        generationConfig: { 
-                            temperature: 1.3,
-                            maxOutputTokens: 8192,
-                            ...(isJson && { responseMimeType: "application/json" })
-                        }
-                    })
+                    body: JSON.stringify(body)
                 });
                 if (!res.ok) throw new Error(`API error: ${res.status} ${res.statusText}`);
                 const data = await res.json();
@@ -144,23 +149,17 @@
                 }
             };
             
-            const getPostPrompt = (topicDetails) => {
+            const getPostPrompt = (topicDetails, scamStory = null) => {
+                 const scamContext = scamStory ? `based on this real-world event: ${scamStory}` : '';
                 if (contentType === 'technical') {
-                    const technicalAudience = "CISOs, CTOs, and IT Heads";
-                    switch (textLength) {
-                        case 'briefing': return `Create a "Threat Intelligence Brief" for LinkedIn on "${topicDetails.title}" for ${technicalAudience}. TONE: Analytical, professional. STRUCTURE: **Threat Brief: [Topic Title]**\n**Attack Vector Analysis:** [Describe TTPs in 1-2 sentences.]\n**Business Impact:** [Outline consequences.]\n**Mitigation Strategy:**\n- **Technology:** [Suggest a specific technology.]\n- **Process:** [Suggest a process change.]\n- **People:** [Suggest a training initiative.]\nA proactive defense posture is our greatest asset. #ThreatIntel #${topic.replace(/_/g, '')}`;
-                        case 'deep_dive': return `Create a "Strategic Analysis" for LinkedIn on "${topicDetails.title}" for ${technicalAudience}. TONE: In-depth, strategic. STRUCTURE: [An opening framing the topic as a business challenge.]\n**Deconstructing the Attack Chain:** [Map the threat to a framework like MITRE ATT&CK.]\n**Second-Order Risks:** [Discuss consequences beyond the initial breach.]\n**Building Resilience:**\n1. **Architectural Defense:** [Recommend an architecture change.]\n2. **Intelligence-Led Defense:** [Recommend integrating threat intelligence.]\n3. **Board-Level Reporting:** [Suggest how to communicate this risk.]\nSecurity is a foundational business principle. #CyberStrategy #${topic.replace(/_/g, '')}`;
-                        case 'future': return `Create a "Future-Forward Analysis" for LinkedIn on "${topicDetails.title}" for ${technicalAudience}. TONE: Visionary, predictive. STRUCTURE: **The Future of [Topic Area]: A Strategic Forecast**\n[An opening statement looking 3-5 years ahead.]\n**Emerging Threat Vectors:**\n- [Predict a future attack method.]\n- [Predict another.]\n**Paradigm Shifts in Defense:**\n- [Suggest a future defensive strategy.]\n**Questions for the Board:**\n- [Pose 2-3 strategic questions for a CISO to ask their board.]\nAnticipating the future is the only way to secure it. #FutureofCyber #Innovation`;
-                        case 'did_you_know': return `Create a "Did You Know?" data point for a technical/executive audience on "${topicDetails.title}". TONE: Factual, concise, and impactful. STRUCTURE: **Did You Know?**\n[State a specific, data-driven statistic or a little-known fact about the topic relevant to a CISO. Focus on business impact or emerging trends.]\n**Strategic Implication:** [In one sentence, explain what this data means for business strategy.]\n**Actionable Insight:** [Provide a high-level recommendation for leadership based on this fact.] #CyberIntel #${topic.replace(/_/g, '')}`;
-                        default: return "Invalid technical format selected.";
-                    }
+                    // Technical prompts remain concise for brevity
+                    return `Create a "Threat Intelligence Brief" for LinkedIn on "${topicDetails.title}" for CISOs & CTOs ${scamContext}. TONE: Analytical, professional. STRUCTURE: **Threat Brief: [Topic Title]**\n**Attack Vector Analysis:** [Describe TTPs in 1-2 sentences.]\n**Business Impact:** [Outline consequences.]\n**Mitigation Strategy:**\n- **Technology:** [Suggest a specific technology.]\n- **Process:** [Suggest a process change.]\n- **People:** [Suggest a training initiative.]\nA proactive defense posture is our greatest asset. #ThreatIntel #${topic.replace(/_/g, '')}`;
                 } else { // Generic Content
                     switch (textLength) {
-                        case 'quick_take': return `Create a "Quick Take" post on "${topicDetails.title}". Short, impactful, and easy to understand. TONE: Clear, direct. STRUCTURE: [A powerful opening statement.]\n3 Golden Rules:\n1. [Rule 1]\n2. [Rule 2]\n3. [Rule 3]\n[A sharp concluding thought.] #CyberSecurity #${topic.replace(/_/g, '')}`;
-                        case 'bollywood': return `You are a creative director. For the topic "${topicDetails.title}", brainstorm a unique micro-story plot with a distinct Indian context. Return a JSON object with {"character": "a relatable Indian character with a name and city, e.g., 'Anjali from Mumbai', 'Mr. Sharma from Delhi'", "plot": "a specific, unique scenario related to the topic that would be common in India, e.g., a fake electricity bill scam on WhatsApp, a deceptive job offer for an IT role in Bangalore"}.`;
-                        case 'briefing': return `Create a "Briefing" post on "${topicDetails.title}". Use a simple, powerful analogy. TONE: Clear, insightful. STRUCTURE: [A strong opening.]\nThink of it this way: [Explain with a simple analogy.]\nThe real danger is [explain the core risk].\nMy 3-step defense:\n1. [Step 1]\n2. [Step 2]\n3. [Step 3]\nStay skeptical, stay safe. #CyberSecurity #${topic.replace(/_/g, '')}`;
-                        case 'deep_dive': return `Create a "Deep Dive" post on "${topicDetails.title}". Tell a short, simple, and realistic story. TONE: Story-driven, educational. STRUCTURE: [An intriguing opening.]\nHere's a quick story: [Tell a simple, relatable story.]\nThe mistake was simple: [Explain the psychological trap].\nThis is a classic case of [Topic Name] that works by exploiting [e.g., our instinct to be helpful].\nHow to avoid this trap:\n- **Always Verify:** [Explain how].\n- **Look for Red Flags:** [List 2 simple flags].\n- **When in Doubt, Don't:** [Explain the safe action].\nOne moment of caution can prevent a crisis. #CyberSecurity #${topic.replace(/_/g, '')}`;
-                        case 'did_you_know': return `Create a "Did You Know?" post for a general audience about "${topicDetails.title}". TONE: Surprising, simple, and memorable. STRUCTURE: **Did you know?**\n[State a single, surprising, and easy-to-understand fact or statistic about the topic.]\n**Why this matters:** [In one simple sentence, explain the real-world implication for a normal person.]\n[A short, actionable tip to protect themselves.] #CyberFacts #${topic.replace(/_/g, '')}`;
+                        case 'quick_take': return `Create a "Quick Take" post on "${topicDetails.title}" ${scamContext}. Short, impactful, and easy to understand. TONE: Clear, direct. STRUCTURE: [A powerful opening statement.]\n3 Golden Rules:\n1. [Rule 1]\n2. [Rule 2]\n3. [Rule 3]\n[A sharp concluding thought.] #CyberSecurity #${topic.replace(/_/g, '')}`;
+                        case 'bollywood': return `You are a creative director. For the topic "${topicDetails.title}", brainstorm a unique micro-story plot with a distinct Indian context. Return a JSON object with {"character": "a relatable Indian character with a name and city", "plot": "a specific, unique scenario related to the topic that would be common in India"}. ${scamContext}`;
+                        case 'briefing': return `Create a "Briefing" post on "${topicDetails.title}" ${scamContext}. Use a simple, powerful analogy. TONE: Clear, insightful. STRUCTURE: [A strong opening.]\nThink of it this way: [Explain with a simple analogy.]\nThe real danger is [explain the core risk].\nMy 3-step defense:\n1. [Step 1]\n2. [Step 2]\n3. [Step 3]\nStay skeptical, stay safe. #CyberSecurity #${topic.replace(/_/g, '')}`;
+                        case 'did_you_know': return `Create a "Did You Know?" post for a general audience about "${topicDetails.title}" ${scamContext}. TONE: Surprising, simple, and memorable. STRUCTURE: **Did you know?**\n[State a single, surprising, and easy-to-understand fact or statistic about the topic.]\n**Why this matters:** [In one simple sentence, explain the real-world implication for a normal person.]\n[A short, actionable tip to protect themselves.] #CyberFacts #${topic.replace(/_/g, '')}`;
                         default: return "Invalid generic format selected.";
                     }
                 }
@@ -174,9 +173,17 @@
                 try {
                     const topicDetails = cybersecurityTopics[topic];
                     let post;
+                    let realScamStory = null;
+
+                    if (topic === 'real_scam') {
+                        setStatus('🔍 Searching for recent scams...');
+                        const searchQuery = `Find a single, recent, specific news story about an online scam in India. Summarize the story in one paragraph: who was targeted, how the scam worked, and the outcome.`;
+                        realScamStory = await callGemini(searchQuery, apiKey);
+                        topicDetails.title = "Real Scam Analysis"; // Override title
+                    }
 
                     setStatus('✨ Crafting impactful message...');
-                    let postPrompt = getPostPrompt(topicDetails);
+                    let postPrompt = getPostPrompt(topicDetails, realScamStory);
                     
                     if (textLength === 'bollywood' && contentType === 'generic') {
                         setStatus('🎬 Directing Bollywood story...');
@@ -200,25 +207,40 @@
                     if (backgroundType === 'canvas') {
                         setStatus('🎨 Creating artistic backgrounds...');
                         images = [generateCanvas(topicDetails.colors, Date.now())];
+                        setVisualContent({ images, isCarousel: false });
+                    } else if (textLength === 'bollywood' && backgroundType === 'comic') {
+                        setStatus('🎬 Directing 3-panel comic...');
+                        const comicContext = `You are an AI art director. Read this story: "${cleanedPost}". Deconstruct it into 3 key scenes: Setup, Conflict, and Resolution. For each scene, write a detailed visual prompt for an AI image generator to create a comic book panel. Each prompt must also include a short narration text (max 15 words) to be drawn onto the panel. The characters MUST be visibly Indian. The output MUST be a JSON array of 3 objects: [{"panel": 1, "visual_prompt": "...", "narration": "..."}, ...]`;
+                        const comicPlanJson = await callGemini(comicContext, apiKey, true);
+                        let comicPlan;
+                        try { comicPlan = JSON.parse(comicPlanJson); } catch { throw new Error("Failed to create comic plan."); }
+
+                        setStatus('✍️ Illustrating your comic strip...');
+                        const imagePromises = comicPlan.map(panel => {
+                            const finalPrompt = `A single, cinematic comic book panel. ${panel.visual_prompt}. A stylish narration box at the bottom contains the text: "${panel.narration}". Style: modern, clean comic art, bold inks, cinematic colors.`;
+                            return generateHighQualityImage(finalPrompt, apiKey);
+                        });
+                        images = await Promise.all(imagePromises);
+                        setVisualContent({ images: images.map(img => img || generateCanvas(topicDetails.colors, Date.now())), isCarousel: true });
                     } else {
                         let imageGenPrompt, statusMsg;
+                        const artDirectorBase = `You are an AI art director. Read this text: "${cleanedPost}". Create a prompt for an image generator. The image must be a single, unified visual storyboard. It must feature visibly **Indian** characters and settings.`;
+
                         if (backgroundType === 'comic') {
-                            setStatus('🎬 Directing comic art...');
-                            const comicContext = `You are an AI art director. Read this text: "${cleanedPost}". Write a single, detailed prompt for an AI image generator to create a 3-panel comic strip that tells this story visually. The characters must be visibly **Indian**. Each panel should have a clean, designated space for text. Describe the scene, character, and action for each panel. The image must not contain any text or speech bubbles itself. Style: Modern, clean comic art, bold inks, cinematic colors.`;
+                            const comicContext = `${artDirectorBase} Your prompt should describe a 3-panel comic strip that visually tells this story. Describe the scene, character, and action for each panel. Style: Modern, clean comic art, bold inks, cinematic colors. The image must include the text from the story, artistically integrated into narration boxes on each panel.`;
                             imageGenPrompt = await callGemini(comicContext, apiKey);
                             statusMsg = '✍️ Illustrating contextual comic...';
                         } else { // cinematic
-                            setStatus('🎬 Directing cinematic infographic...');
-                            const cinematicContext = `You are an AI art director. Read this text: "${cleanedPost}". It contains key points. Write a single, detailed prompt for an AI image generator to create a professional 3-panel triptych infographic. The visual must feature **Indian people and settings**. Each panel should visually represent one of the key points, leaving a clean, designated area within each panel for text. Describe the iconography, scene, and mood. The image must not contain any text itself. Style: Cinematic, moody lighting, professional, high-tech aesthetic.`;
+                            const cinematicContext = `${artDirectorBase} Your prompt should describe a professional 3-panel triptych infographic. Each panel should visually represent one of the key points in the text, with the text of the point elegantly integrated into the panel. Describe the iconography, scene, and mood for each panel. Style: Cinematic, moody lighting, professional, high-tech aesthetic.`;
                             imageGenPrompt = await callGemini(cinematicContext, apiKey);
                             statusMsg = '📸 Generating contextual infographic...';
                         }
                         setStatus(statusMsg);
                         const generatedImage = await generateHighQualityImage(imageGenPrompt, apiKey);
                         images = [generatedImage || generateCanvas(topicDetails.colors, Date.now())];
+                        setVisualContent({ images, isCarousel: false });
                     }
                     
-                    setVisualContent({ images, text: cleanedPost });
                     setStatus('✅ Insight ready!');
 
                 } catch (err) {
@@ -242,22 +264,23 @@
                 if (!visualContent || !visualContent.images || visualContent.images.length === 0) return;
                 setDownloadSuccess('Preparing...');
                 try {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 1080; canvas.height = 1080;
-                    const ctx = canvas.getContext('2d');
-                    const { images } = visualContent;
-                    
-                    const img = new Image();
-                    img.crossOrigin = 'anonymous';
-                    img.src = images[0];
-                    await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; });
-                    
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    const link = document.createElement('a');
-                    link.download = `CyberGuard_${topic.replace(/_/g, '')}_${Date.now()}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
+                    if (visualContent.isCarousel) {
+                        const zip = new JSZip();
+                        for (let i = 0; i < visualContent.images.length; i++) {
+                            const imgData = visualContent.images[i].split(',')[1];
+                            zip.file(`panel_${i + 1}.png`, imgData, {base64: true});
+                        }
+                        const blob = await zip.generateAsync({type:"blob"});
+                        const link = document.createElement("a");
+                        link.href = URL.createObjectURL(blob);
+                        link.download = `CyberGuard_Comic_${Date.now()}.zip`;
+                        link.click();
+                    } else {
+                        const link = document.createElement('a');
+                        link.download = `CyberGuard_${topic.replace(/_/g, '')}_${Date.now()}.png`;
+                        link.href = visualContent.images[0];
+                        link.click();
+                    }
                     setDownloadSuccess('Downloaded!');
                     setTimeout(() => setDownloadSuccess(''), 2000);
                 } catch (e) {
@@ -291,26 +314,25 @@
                             </div>
                         </div>
 
-                        {platform === 'linkedin' && (
-                            <div>
+                        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                             <div>
                                 <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Content Format</label>
                                 <select value={textLength} onChange={(e)=>setTextLength(e.target.value)} className="w-full p-2 sm:p-3 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
                                     {Object.entries(availableTextLengths).map(([k,v])=><option key={k} value={k}>{v.name} ({v.desc})</option>)}
                                 </select>
                             </div>
-                        )}
-
+                             <div>
+                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Visual Style</label>
+                                <select value={backgroundType} onChange={(e)=>setBackgroundType(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
+                                    {Object.entries(backgroundTypes).map(([k,v])=><option key={k} value={k}>{v}</option>)}
+                                </select>
+                            </div>
+                        </div>
+                        
                         <div>
                             <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Cybersecurity Topic</label>
                             <select value={topic} onChange={(e)=>setTopic(e.target.value)} className="w-full p-2 sm:p-3 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
                                 {Object.entries(cybersecurityTopics).map(([k,v])=><option key={k} value={k}>{v.emoji} {v.title}</option>)}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Visual Style</label>
-                            <select value={backgroundType} onChange={(e)=>setBackgroundType(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
-                                {Object.entries(backgroundTypes).map(([k,v])=><option key={k} value={k}>{v}</option>)}
                             </select>
                         </div>
                         
@@ -338,7 +360,7 @@
                                     <div className="flex justify-between items-center border-b border-gray-700/50 pb-3 mb-4">
                                         <h2 className="text-base sm:text-lg font-bold text-gray-200">
                                             📝 Post Content
-                                            {platform === 'linkedin' && <span className="text-xs text-gray-500 ml-2">({(availableTextLengths[textLength] || {}).name})</span>}
+                                            <span className="text-xs text-gray-500 ml-2">({(availableTextLengths[textLength] || {}).name})</span>
                                         </h2>
                                         <button onClick={handleCopy} disabled={!generatedText} className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm disabled:opacity-50 transition">
                                             {copySuccess || '📋 Copy'}
@@ -366,7 +388,11 @@
                                         </div>
                                     </div>
                                     <div className="flex-grow aspect-square bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden shadow-inner">
-                                        {visualContent ? <img src={visualContent.images[0]} alt="Generated Visual" className="w-full h-full object-cover"/> : (
+                                        {visualContent ? <VisualDisplay 
+                                            content={visualContent} 
+                                            currentSlide={currentSlide}
+                                            setCurrentSlide={setCurrentSlide}
+                                        /> : (
                                             <div className="text-center text-gray-500 text-xs sm:text-sm">
                                                 <p className="text-cyan-400 font-semibold mb-2">🖼️ Visual Preview</p>
                                                 <p className="text-xs text-gray-600">Your custom infographic or comic will appear here.</p>
@@ -380,6 +406,29 @@
                 </div>
             );
         }
+
+        const VisualDisplay = ({content, currentSlide, setCurrentSlide}) => {
+            if (!content || !content.images || content.images.length === 0) return null;
+            const {images, isCarousel} = content;
+            return (
+                <div className="relative w-full h-full bg-black">
+                    {images.map((image, i) => (
+                        <div key={i} className={`absolute inset-0 transition-opacity duration-500 ${i === currentSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                            {image && <img src={image} alt={`Visual Panel ${i+1}`} className="w-full h-full object-cover"/>}
+                        </div>
+                    ))}
+                    {isCarousel && images.length > 1 && (
+                        <>
+                            <button onClick={()=>setCurrentSlide((p)=>(p-1+images.length)%images.length)} className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 sm:p-3 rounded-full z-10 transition">←</button>
+                            <button onClick={()=>setCurrentSlide((p)=>(p+1)%images.length)} className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 sm:p-3 rounded-full z-10 transition">→</button>
+                            <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2 z-10">
+                                {images.map((_,i)=><div key={i} onClick={()=>setCurrentSlide(i)} className={`h-2 sm:h-3 rounded-full cursor-pointer transition-all ${i===currentSlide?'bg-white w-8 sm:w-10':'bg-white/50 w-2 sm:w-3'}`}/>)}
+                            </div>
+                        </>
+                    )}
+                </div>
+            );
+        };
 
         const Spinner = ({size='sm'}) => (
             <svg className={`animate-spin ${size==='sm'?'h-5 w-5':'h-10 w-10'} text-white`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
