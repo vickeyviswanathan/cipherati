@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberGuard AI - Strategic Cybersecurity Insights</title>
+    <title>CyberGuard AI - The Ultimate Edition</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -14,27 +14,15 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect } = React;
 
         const cybersecurityTopics = {
             phishing: { title: "Phishing & Email Scams", emoji: "🎣", colors: ["#FF6B6B", "#E84545", "#C62E2E"] },
             whatsapp_upi: { title: "WhatsApp & UPI Frauds", emoji: "💸", colors: ["#4ECDC4", "#26A69A", "#00897B"] },
-            passwords: { title: "Password Security", emoji: "🔐", colors: ["#45B7D1", "#0288D1", "#01579B"] },
             ransomware: { title: "Ransomware Attacks", emoji: "🔒", colors: ["#F1948A", "#E57373", "#C62828"] },
             social_media: { title: "Social Media Safety", emoji: "📱", colors: ["#F7DC6F", "#FBC02D", "#F57F17"] },
             two_factor: { title: "Two-Factor Authentication", emoji: "🔑", colors: ["#FFA07A", "#FF7043", "#E64A19"] },
-            public_wifi: { title: "Public Wi-Fi Dangers", emoji: "📶", colors: ["#BB8FCE", "#9C27B0", "#6A1B9A"] },
-            data_backup: { title: "Data Backup Strategies", emoji: "💾", colors: ["#85C1E2", "#42A5F5", "#1565C0"] },
-            remote_work: { title: "Remote Work Security", emoji: "🏠", colors: ["#98D8C8", "#4DB6AC", "#00897B"] },
             deepfakes: { title: "Deepfakes & AI Scams", emoji: "🤖", colors: ["#85C1E2", "#42A5F5", "#1565C0"] },
-            crypto_scams: { title: "Cryptocurrency Scams", emoji: "₿", colors: ["#F39C12", "#E67E22", "#D35400"] },
-            job_scams: { title: "Job & Employment Scams", emoji: "💼", colors: ["#3498DB", "#2980B9", "#1F618D"] },
-            online_shopping: { title: "Online Shopping Safety", emoji: "🛒", colors: ["#E74C3C", "#C0392B", "#922B21"] },
-            mobile_banking: { title: "Mobile Banking Security", emoji: "🏦", colors: ["#16A085", "#138D75", "#117864"] },
-            iot_security: { title: "IoT Device Security", emoji: "🌐", colors: ["#8E44AD", "#7D3C98", "#6C3483"] },
-            insider_threats: { title: "Insider Threats", emoji: "👤", colors: ["#E67E22", "#D35400", "#CA6F1E"] },
-            cloud_security: { title: "Cloud Security Basics", emoji: "☁️", colors: ["#3498DB", "#2E86C1", "#2874A6"] },
-            kids_online: { title: "Kids Online Safety", emoji: "👨‍👩‍👧", colors: ["#EC7063", "#E74C3C", "#CB4335"] }
         };
 
         const targetAudiences = { 
@@ -42,8 +30,6 @@
             general: "General Public", 
             seniors: "Senior Citizens",
             youth: "Young Adults & Students",
-            parents: "Parents",
-            business_owners: "Business Owners"
         };
 
         const tones = { 
@@ -53,160 +39,41 @@
             educational: "Educational & Informative"
         };
         
-        const textLengths = {
+        const genericTextLengths = {
             quick_take: { name: "Quick Take", desc: "~60 words" },
             briefing: { name: "Briefing", desc: "~120 words" },
-            deep_dive: { name: "Deep Dive", desc: "~200 words" },
-            bollywood: { name: "Bollywood Story", desc: "Story Mode" }
+            bollywood: { name: "Bollywood Story", desc: "Story Mode" },
+            did_you_know: { name: "Did You Know?", desc: "Surprising Fact" }
+        };
+
+        const technicalTextLengths = {
+            briefing: { name: "Executive Briefing", desc: "~150 words" },
+            deep_dive: { name: "Strategic Deep Dive", desc: "~250 words" },
+            future: { name: "Future-Forward Analysis", desc: "Predictive insights" },
+            did_you_know: { name: "Did You Know?", desc: "Data Point" }
         };
 
         const backgroundTypes = {
-            imagen4: "AI Photos (Best)",
-            gemini_native: "AI Images (Fast)",
-            canvas: "Canvas Art (Instant)"
+            cinematic: "Cinematic Infographic",
+            comic: "Comic Strip",
+            canvas: "Abstract Art"
         };
-
-        const fontStyles = {
-            modern: { name: "Modern", font: "'Inter', sans-serif", weight: "800" },
-            bold: { name: "Bold", font: "'Poppins', sans-serif", weight: "800" },
-            elegant: { name: "Elegant", font: "'Playfair Display', serif", weight: "900" }
-        };
-
-        const platformFormats = {
-            linkedin: [{ value: 'single', label: 'Single' }, { value: 'carousel', label: 'Carousel' }],
-            instagram: [{ value: 'single', label: 'Single' }, { value: 'carousel', label: 'Carousel' }]
-        };
-
-        const hookStyles = [
-            "shocking statistic", "personal story", "recent incident", "provocative question",
-            "surprising fact", "myth-busting", "scenario-based", "contrast comparison"
-        ];
         
-        // REVISED PROMPTS: Cinematic, professional, storytelling visuals
-        const getIndianImagePrompts = (topicKey) => {
-            const strictNoText = "Crucially, the image must contain absolutely NO text, words, or letters. Any screens should be glowing, blurry, or show abstract data patterns."
-            const prompts = {
-                phishing: [
-                    `A highly realistic, cinematic photo of a professional Indian woman in a modern, minimalist office in Gurugram at night. She's looking at her laptop with a subtle expression of concern and suspicion. The screen glows on her face. The lighting is moody and atmospheric, with deep shadows and soft highlights. The background is slightly out of focus, emphasizing her expression. Bottom third of the image is dark and clear for text. ${strictNoText}`,
-                    `Tense, cinematic close-up on an Indian man's face, illuminated only by his smartphone in a dark room. His eyes are wide with alarm as he reads a deceptive message. The reflection of the screen shows abstract, scrolling text. Shallow depth of field, high-contrast, moody aesthetic. Bottom third is dark for text overlay. ${strictNoText}`
-                ],
-                ransomware: [
-                    `Cinematic shot from behind a server rack in a dark data center in Bangalore. An IT professional is seen in the distance, silhouetted against a single monitor flashing a red, abstract warning symbol. The mood is tense and urgent. Use of volumetric lighting and shallow depth of field. Bottom of the image is a dark, clean space for text. ${strictNoText}`,
-                    `Dramatic, high-angle shot of a modern office space in Mumbai, completely dark except for the eerie red glow emanating from every computer screen. The screens show a generic, abstract skull icon, not text. The empty chairs create a haunting atmosphere. This symbolizes a company-wide ransomware attack. ${strictNoText}`
-                ],
-                passwords: [
-                    `An elegant, close-up, macro shot of a person's hand typing on a sleek, modern keyboard. The keys being pressed are glowing with a secure, blue light. The overall aesthetic is clean, high-tech, and sophisticated, like a premium product commercial. Dark, moody lighting. Bottom of the image has clean space for text. ${strictNoText}`,
-                    `Symbolic, cinematic photo: A single, strong, glowing digital key floating in front of a complex, out-of-focus background of chaotic data streams. The key is sharp and in focus, representing a strong password as the single point of security. Minimalist and powerful. ${strictNoText}`
-                ],
-                deepfakes: [
-                    `A striking, cinematic portrait of a professional Indian person. One half of their face is perfectly normal, the other half is subtly dissolving into a digital, pixelated grid, revealing code underneath. The lighting is dramatic, split down the middle. High-concept and thought-provoking. ${strictNoText}`,
-                    `A close-up shot of a hand holding up a transparent pane of glass. On the glass, a flickering, holographic, but perfectly realistic face is being projected. The person holding the glass looks on with a sense of wonder and fear. Represents the creation of a deepfake. ${strictNoText}`
-                ],
-                default: [
-                    `A professional Indian person standing at a large, futuristic holographic interface, manipulating glowing data streams. The environment is a modern, high-tech command center. The image should convey a sense of control, intelligence, and proactivity in the face of digital threats. Cinematic, blue and white color palette. Bottom third is clear for text. ${strictNoText}`,
-                    `A single person silhouetted against a vast, digital landscape representing the internet. They are standing on a secure, glowing platform, while the landscape around them has subtle red 'danger' zones. Symbolizes safe navigation in a complex digital world. High-concept, cinematic. ${strictNoText}`
-                ]
-            };
-            return prompts[topicKey] || prompts.default;
-        };
-
         const generateCanvas = (colors, seed) => {
             const canvas = document.createElement('canvas');
             canvas.width = canvas.height = 1080;
             const ctx = canvas.getContext('2d');
-
-            const styles = ['gradient', 'geometric', 'abstract', 'waves', 'particles'];
-            const style = styles[Math.floor((seed * 7) % styles.length)];
             const c1 = colors[Math.floor((seed * 3) % colors.length)];
-            const c2 = colors[Math.floor((seed * 5) % colors.length)];
-
-            if (style === 'gradient') {
-                const directions = [[0,0,1080,1080], [1080,0,0,1080], [540,0,540,1080], [0,540,1080,540]];
-                const dir = directions[Math.floor((seed * 11) % directions.length)];
-                const grad = ctx.createLinearGradient(...dir);
-                grad.addColorStop(0, c1);
-                grad.addColorStop(0.5, '#1a1a2e');
-                grad.addColorStop(1, c2);
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, 1080, 1080);
-
-                ctx.fillStyle = 'rgba(255,255,255,0.05)';
-                for(let i=0; i<5; i++) {
-                    ctx.beginPath();
-                    ctx.arc((seed*i*13)%1080, (seed*i*17)%1080, 100+(seed*i)%150, 0, Math.PI*2);
-                    ctx.fill();
-                }
-            } else if (style === 'geometric') {
-                ctx.fillStyle = '#0a0a1a';
-                ctx.fillRect(0, 0, 1080, 1080);
-                ctx.strokeStyle = c1;
-                ctx.lineWidth = 3;
-                ctx.globalAlpha = 0.4;
-                for(let i=0; i<25; i++) {
-                    const x = (seed*i*23)%1080, y = (seed*i*29)%1080, s = 50+(seed*i*7)%120;
-                    if(i%3===0) ctx.strokeRect(x, y, s, s);
-                    else if(i%3===1) { ctx.beginPath(); ctx.arc(x,y,s/2,0,Math.PI*2); ctx.stroke(); }
-                    else { ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+s,y); ctx.lineTo(x+s/2,y+s); ctx.closePath(); ctx.stroke(); }
-                }
-                ctx.globalAlpha = 1;
-            } else if (style === 'waves') {
-                const grad = ctx.createLinearGradient(0, 0, 0, 1080);
-                grad.addColorStop(0, c1);
-                grad.addColorStop(1, '#0a0a1a');
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, 1080, 1080);
-                ctx.strokeStyle = c2;
-                ctx.lineWidth = 3;
-                ctx.globalAlpha = 0.5;
-                for(let w=0; w<6; w++) {
-                    ctx.beginPath();
-                    for(let x=0; x<1080; x+=5) {
-                        const y = 540 + Math.sin((x+seed*w)/50)*(100+w*40);
-                        if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-                    }
-                    ctx.stroke();
-                }
-                ctx.globalAlpha = 1;
-            } else if (style === 'particles') {
-                const grad = ctx.createRadialGradient(540,540,0,540,540,700);
-                grad.addColorStop(0, c2);
-                grad.addColorStop(1, '#050510');
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, 1080, 1080);
-                for(let i=0; i<120; i++) {
-                    const size = 2+((seed*i*61)%6);
-                    const alpha = 0.3+((seed*i*67)%7)/10;
-                    ctx.globalAlpha = alpha;
-                    ctx.fillStyle = i%2===0 ? c1 : c2;
-                    ctx.beginPath();
-                    ctx.arc((seed*i*71)%1080, (seed*i*73)%1080, size, 0, Math.PI*2);
-                    ctx.fill();
-                }
-                ctx.globalAlpha = 1;
-            } else {
-                const rad = ctx.createRadialGradient(540,540,0,540,540,700);
-                rad.addColorStop(0, c1);
-                rad.addColorStop(1, '#000');
-                ctx.fillStyle = rad;
-                ctx.fillRect(0, 0, 1080, 1080);
-                ctx.strokeStyle = c2;
-                ctx.lineWidth = 4;
-                ctx.globalAlpha = 0.5;
-                for(let i=0; i<20; i++) {
-                    ctx.beginPath();
-                    ctx.moveTo((seed*i*31)%1080, (seed*i*37)%1080);
-                    ctx.lineTo((seed*i*41)%1080, (seed*i*43)%1080);
-                    ctx.stroke();
-                }
-                ctx.globalAlpha = 1;
-            }
-
+            const grad = ctx.createRadialGradient(540,540,0,540,540,700);
+            grad.addColorStop(0, c1);
+            grad.addColorStop(1, '#050510');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 1080, 1080);
             const vig = ctx.createRadialGradient(540,540,360,540,540,880);
             vig.addColorStop(0, 'rgba(0,0,0,0)');
             vig.addColorStop(1, 'rgba(0,0,0,0.5)');
             ctx.fillStyle = vig;
             ctx.fillRect(0, 0, 1080, 1080);
-
             return canvas.toDataURL('image/png');
         };
 
@@ -218,10 +85,8 @@
             const [contentType, setContentType] = useState('generic');
             const [tone, setTone] = useState('professional');
             const [textLength, setTextLength] = useState('briefing');
-            const [backgroundType, setBackgroundType] = useState('canvas');
-            const [fontStyle, setFontStyle] = useState('modern');
-            const [format, setFormat] = useState('single');
-
+            const [backgroundType, setBackgroundType] = useState('cinematic');
+            
             const [generatedText, setGeneratedText] = useState('');
             const [visualContent, setVisualContent] = useState(null);
             const [isLoading, setIsLoading] = useState(false);
@@ -229,285 +94,132 @@
             const [copySuccess, setCopySuccess] = useState('');
             const [downloadSuccess, setDownloadSuccess] = useState('');
             const [status, setStatus] = useState('');
-            const [generationCount, setGenerationCount] = useState(0);
-            const [currentSlide, setCurrentSlide] = useState(0);
-
-            useEffect(() => { setFormat(platformFormats[platform][0].value); }, [platform]);
 
             useEffect(() => {
-                if (visualContent) {
-                    setCurrentSlide(0);
-                }
-            }, [visualContent]);
-            
-            useEffect(() => {
-                if (contentType === 'technical' && textLength === 'bollywood') {
-                    setTextLength('briefing'); 
+                 const currentLengths = contentType === 'technical' ? technicalTextLengths : genericTextLengths;
+                if (!currentLengths[textLength]) {
+                    setTextLength(Object.keys(currentLengths)[0]);
                 }
             }, [contentType, textLength]);
 
-            const callGemini = async (prompt, key) => {
+            const callGemini = async (prompt, key, isJson = false) => {
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${key}`;
-                const tempVariation = 1.3 + (Math.random() * 0.4); 
                 const res = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{ parts: [{ text: prompt }] }],
                         generationConfig: { 
-                            temperature: tempVariation,
-                            topK: 35 + Math.floor(Math.random() * 10),
-                            topP: 0.92 + (Math.random() * 0.06), 
-                            maxOutputTokens: 2048 
+                            temperature: 1.3,
+                            maxOutputTokens: 8192,
+                            ...(isJson && { responseMimeType: "application/json" })
                         }
                     })
                 });
                 if (!res.ok) throw new Error(`API error: ${res.status} ${res.statusText}`);
                 const data = await res.json();
-                
                 if (!data.candidates || data.candidates.length === 0) {
-                    if (data.promptFeedback && data.promptFeedback.blockReason) {
-                        return `Content generation failed because the prompt was blocked for: ${data.promptFeedback.blockReason}. Please try a different topic or adjust your settings.`;
-                    }
-                    return 'Content generation failed. The model returned an empty response. Please try again.';
+                     if (data.promptFeedback && data.promptFeedback.blockReason) { return `Content generation failed: ${data.promptFeedback.blockReason}.`; }
+                    return 'Content generation failed: Empty response.';
                 }
-                
                 const text = data.candidates[0]?.content?.parts?.[0]?.text;
-                if (text) {
-                    return text;
-                }
-                return 'Content generation failed. The model returned an empty text part.';
+                return text || 'Content generation failed: Empty text part.';
             };
             
-            // This function now handles all high-quality image generation
             const generateHighQualityImage = async (prompt, key) => {
                 try {
                     const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${key}`;
                     const res = await fetch(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            instances: [{ prompt: prompt }],
-                            parameters: { sampleCount: 1, aspectRatio: "1:1", outputFormat: "png" }
-                        })
+                        body: JSON.stringify({ instances: [{ prompt }], parameters: { sampleCount: 1, aspectRatio: "1:1" } })
                     });
                     if (!res.ok) return null;
                     const data = await res.json();
                     const img = data?.predictions?.[0]?.bytesBase64Encoded;
                     return img ? `data:image/png;base64,${img}` : null;
                 } catch (e) {
-                    console.error("Error generating high quality image:", e);
+                    console.error("Error generating image:", e);
                     return null;
+                }
+            };
+            
+            const getPostPrompt = (topicDetails) => {
+                if (contentType === 'technical') {
+                    const technicalAudience = "CISOs, CTOs, and IT Heads";
+                    switch (textLength) {
+                        case 'briefing': return `Create a "Threat Intelligence Brief" for LinkedIn on "${topicDetails.title}" for ${technicalAudience}. TONE: Analytical, professional. STRUCTURE: **Threat Brief: [Topic Title]**\n**Attack Vector Analysis:** [Describe TTPs in 1-2 sentences.]\n**Business Impact:** [Outline consequences.]\n**Mitigation Strategy:**\n- **Technology:** [Suggest a specific technology.]\n- **Process:** [Suggest a process change.]\n- **People:** [Suggest a training initiative.]\nA proactive defense posture is our greatest asset. #ThreatIntel #${topic.replace(/_/g, '')}`;
+                        case 'deep_dive': return `Create a "Strategic Analysis" for LinkedIn on "${topicDetails.title}" for ${technicalAudience}. TONE: In-depth, strategic. STRUCTURE: [An opening framing the topic as a business challenge.]\n**Deconstructing the Attack Chain:** [Map the threat to a framework like MITRE ATT&CK.]\n**Second-Order Risks:** [Discuss consequences beyond the initial breach.]\n**Building Resilience:**\n1. **Architectural Defense:** [Recommend an architecture change.]\n2. **Intelligence-Led Defense:** [Recommend integrating threat intelligence.]\n3. **Board-Level Reporting:** [Suggest how to communicate this risk.]\nSecurity is a foundational business principle. #CyberStrategy #${topic.replace(/_/g, '')}`;
+                        case 'future': return `Create a "Future-Forward Analysis" for LinkedIn on "${topicDetails.title}" for ${technicalAudience}. TONE: Visionary, predictive. STRUCTURE: **The Future of [Topic Area]: A Strategic Forecast**\n[An opening statement looking 3-5 years ahead.]\n**Emerging Threat Vectors:**\n- [Predict a future attack method.]\n- [Predict another.]\n**Paradigm Shifts in Defense:**\n- [Suggest a future defensive strategy.]\n**Questions for the Board:**\n- [Pose 2-3 strategic questions for a CISO to ask their board.]\nAnticipating the future is the only way to secure it. #FutureofCyber #Innovation`;
+                        case 'did_you_know': return `Create a "Did You Know?" data point for a technical/executive audience on "${topicDetails.title}". TONE: Factual, concise, and impactful. STRUCTURE: **Did You Know?**\n[State a specific, data-driven statistic or a little-known fact about the topic relevant to a CISO. Focus on business impact or emerging trends.]\n**Strategic Implication:** [In one sentence, explain what this data means for business strategy.]\n**Actionable Insight:** [Provide a high-level recommendation for leadership based on this fact.] #CyberIntel #${topic.replace(/_/g, '')}`;
+                        default: return "Invalid technical format selected.";
+                    }
+                } else { // Generic Content
+                    switch (textLength) {
+                        case 'quick_take': return `Create a "Quick Take" post on "${topicDetails.title}". Short, impactful, and easy to understand. TONE: Clear, direct. STRUCTURE: [A powerful opening statement.]\n3 Golden Rules:\n1. [Rule 1]\n2. [Rule 2]\n3. [Rule 3]\n[A sharp concluding thought.] #CyberSecurity #${topic.replace(/_/g, '')}`;
+                        case 'bollywood': return `You are a creative director. For the topic "${topicDetails.title}", brainstorm a unique micro-story plot with a distinct Indian context. Return a JSON object with {"character": "a relatable Indian character with a name and city, e.g., 'Anjali from Mumbai', 'Mr. Sharma from Delhi'", "plot": "a specific, unique scenario related to the topic that would be common in India, e.g., a fake electricity bill scam on WhatsApp, a deceptive job offer for an IT role in Bangalore"}.`;
+                        case 'briefing': return `Create a "Briefing" post on "${topicDetails.title}". Use a simple, powerful analogy. TONE: Clear, insightful. STRUCTURE: [A strong opening.]\nThink of it this way: [Explain with a simple analogy.]\nThe real danger is [explain the core risk].\nMy 3-step defense:\n1. [Step 1]\n2. [Step 2]\n3. [Step 3]\nStay skeptical, stay safe. #CyberSecurity #${topic.replace(/_/g, '')}`;
+                        case 'deep_dive': return `Create a "Deep Dive" post on "${topicDetails.title}". Tell a short, simple, and realistic story. TONE: Story-driven, educational. STRUCTURE: [An intriguing opening.]\nHere's a quick story: [Tell a simple, relatable story.]\nThe mistake was simple: [Explain the psychological trap].\nThis is a classic case of [Topic Name] that works by exploiting [e.g., our instinct to be helpful].\nHow to avoid this trap:\n- **Always Verify:** [Explain how].\n- **Look for Red Flags:** [List 2 simple flags].\n- **When in Doubt, Don't:** [Explain the safe action].\nOne moment of caution can prevent a crisis. #CyberSecurity #${topic.replace(/_/g, '')}`;
+                        case 'did_you_know': return `Create a "Did You Know?" post for a general audience about "${topicDetails.title}". TONE: Surprising, simple, and memorable. STRUCTURE: **Did you know?**\n[State a single, surprising, and easy-to-understand fact or statistic about the topic.]\n**Why this matters:** [In one simple sentence, explain the real-world implication for a normal person.]\n[A short, actionable tip to protect themselves.] #CyberFacts #${topic.replace(/_/g, '')}`;
+                        default: return "Invalid generic format selected.";
+                    }
                 }
             };
 
             const handleGenerate = async () => {
-                if (!apiKey || apiKey.length < 10) {
-                    setError('Please enter valid API key');
-                    return;
-                }
-
+                if (!apiKey) { setError('Please enter a valid API key.'); return; }
                 setIsLoading(true);
-                setError('');
-                setCopySuccess('');
-                setDownloadSuccess('');
-                setGeneratedText('');
-                setVisualContent(null);
-                setStatus('');
+                [setError, setCopySuccess, setDownloadSuccess, setGeneratedText, setVisualContent, setStatus].forEach(f => f(''));
 
                 try {
                     const topicDetails = cybersecurityTopics[topic];
-                    const isCarousel = format === 'carousel';
-                    const isInstagram = platform === 'instagram';
-                    const uniqueSeed = Date.now() + generationCount * 12345;
-
-                    setStatus('🎲 Devising unique angle...');
-                    
                     let post;
 
-                    if (isInstagram) {
-                        setStatus('📱 Writing Instagram caption...');
-                        post = await callGemini(`Write a short, powerful Instagram caption about "${topicDetails.title}". Use a simple analogy or story. FORMAT: 100-150 words, line breaks, quick tips, a strong CTA, 8-10 hashtags, 3-4 emojis. Be conversational and high-impact.`, apiKey);
-                    } else { // LinkedIn Logic
-                        setStatus('✨ Crafting impactful message...');
-                        let postPrompt;
+                    setStatus('✨ Crafting impactful message...');
+                    let postPrompt = getPostPrompt(topicDetails);
+                    
+                    if (textLength === 'bollywood' && contentType === 'generic') {
+                        setStatus('🎬 Directing Bollywood story...');
+                        const storyAngleJson = await callGemini(postPrompt, apiKey, true);
+                        let storyAngle;
+                        try { storyAngle = JSON.parse(storyAngleJson); } catch { storyAngle = {character: "a person", plot: "a scam"}; }
                         
-                        // TECHNICAL CONTENT PROMPTS
-                        if(contentType === 'technical') {
-                           const technicalAudience = "CISOs, CTOs, and IT Heads";
-                           if (textLength === 'quick_take') {
-                                postPrompt = `Create an "Executive Summary" for a LinkedIn post on "${topicDetails.title}" for ${technicalAudience}. It must be extremely concise and strategic.
-TONE: Authoritative, direct, and focused on business risk.
-STRUCTURE:
-[A powerful opening statement about the business impact of this threat.]
-Key Risk Factors:
-1. [Risk 1, e.g., "Human Error Under Pressure"]
-2. [Risk 2, e.g., "Insufficient Technical Controls"]
-Strategic Imperatives:
-1. [Action 1, e.g., "Implement Zero-Trust Verification"]
-2. [Action 2, e.g., "Mandate Continuous Simulation Training"]
-The real cost isn't the ransom; it's the reputational damage.
-#CyberRisk #${topic.replace(/_/g, '')} #CISO #TechLeadership`;
-                            } else if (textLength === 'briefing') {
-                                postPrompt = `Create a "Threat Intelligence Brief" for LinkedIn on "${topicDetails.title}" for ${technicalAudience}.
-TONE: Analytical, data-driven, and professional.
-STRUCTURE:
-**Threat Brief: [Topic Title]**
-**Attack Vector Analysis:** [Briefly describe how threat actors are operationalizing this attack, mentioning common TTPs in 1-2 sentences.]
-**Business Impact Assessment:** [Outline the potential consequences: financial, operational, and reputational.]
-**Recommended Mitigation Strategy:**
-- **Technology:** [Suggest a specific technology or configuration, e.g., "Deploy DMARC, DKIM, and SPF protocols..."].
-- **Process:** [Suggest a process change, e.g., "Establish a clear out-of-band verification process for financial transfers."].
-- **People:** [Suggest a targeted training initiative.].
-A proactive defense posture is our greatest asset.
-#ThreatIntel #${topic.replace(/_/g, '')} #Cybersecurity #RiskManagement`;
-                            } else { // Deep Dive
-                                postPrompt = `Create a "Strategic Analysis" for LinkedIn on "${topicDetails.title}" for ${technicalAudience}.
-TONE: In-depth, strategic, and forward-looking.
-STRUCTURE:
-[An opening that frames the topic as a strategic business challenge, not just an IT problem.]
-**Deconstructing the Attack Chain:**
-[Briefly map the threat to a recognized framework like MITRE ATT&CK. E.g., "This typically begins with T1566 (Phishing) and aims for T1213 (Data from Information Repositories)..."]
-**Beyond the Obvious: Second-Order Risks**
-[Discuss the less obvious consequences, like erosion of customer trust, regulatory fines, or supply chain disruption.]
-**Building Long-Term Resilience:**
-1. **Architectural Defense:** [Recommend a fundamental security architecture change, e.g., "Moving towards a passwordless or Zero Trust architecture..."].
-2. **Intelligence-Led Defense:** [Recommend integrating threat intelligence feeds to anticipate attacks].
-3. **Board-Level Reporting:** [Suggest how to communicate this risk in terms of business metrics to the board].
-Security is not a feature; it's a foundational business principle.
-#CyberStrategy #${topic.replace(/_/g, '')} #CISO #TechLeadership`;
-                            }
-                        } 
-                        // GENERIC CONTENT PROMPTS
-                        else {
-                            if (textLength === 'quick_take') {
-                                postPrompt = `Create a "Quick Take" for a LinkedIn post on "${topicDetails.title}". It must be extremely short, impactful, and easy to understand.
-TONE: Clear, direct, and professional.
-STRUCTURE:
-[A powerful, one-sentence opening statement.]
-Here are the 3 golden rules:
-1. [Simple Rule 1]
-2. [Simple Rule 2]
-3. [Simple Rule 3]
-[A sharp, one-sentence concluding thought.]
-#CyberSecurity #${topic.replace(/_/g, '')}`;
-                            } else if (textLength === 'bollywood') {
-                                postPrompt = `Act as a seasoned Bollywood scriptwriter and write a single, continuous, immersive short story that teaches topicDetails.title. Give the story a cinematic title at the very top.
-
-Set it in India. The protagonist can be a single person, a couple, or office colleagues—choose what best serves the lesson. Start in the middle of an action to create instant tension. Use simple, visual, Bollywood-style language with sensory detail (light, sound, touch), strong emotions, and cultural texture.
-
-Do not restrict the flow of storytelling. Keep sentences mostly short and clear, but allow rhythm to breathe. Show:
-
-The internal conflict beneath the surface.
-
-One decisive action that changes the outcome.
-
-A concrete result.
-
-A short, heartfelt reflection that makes the learning felt.
-
-Constraints:
-
-One unfolding incident. No headings. No episodes. No jargon or heavy tech talk.
-
-After the story, add:
-Final Message
-
-3–5 bullet points in very simple English about what to do next.
-
-End with this exact CTA line:
-Moral of the Story: [A simple, memorable one-line takeaway.]
-#CyberSecurity #Bollywood #InfoSec`;
-                            } else if (textLength === 'briefing') {
-                                postPrompt = `Create a "Briefing" for a LinkedIn post on "${topicDetails.title}". Use a simple, powerful analogy to explain the concept.
-TONE: Clear, professional, and insightful.
-STRUCTURE:
-[A strong opening sentence.]
-Think of it this way: [Explain the topic with a simple analogy. E.g., For Phishing: "A phishing email is like a stranger offering you a free sweet, but their real goal is to get your house keys."]
-The real danger is [explain the core risk in one sentence].
-My simple 3-step defense:
-1. [Actionable Step 1]
-2. [Actionable Step 2]
-3. [Actionable Step 3]
-Stay skeptical, stay safe.
-#CyberSecurity #${topic.replace(/_/g, '')} #StaySafe`;
-                            } else { // Deep Dive
-                                postPrompt = `Create a "Deep Dive" for a LinkedIn post on "${topicDetails.title}". Tell a short, simple, and realistic story to illustrate the point.
-TONE: Story-driven, educational, and serious.
-STRUCTURE:
-[An intriguing opening that sets the scene for a story.]
-Here's a quick story: [Tell a simple, relatable story about someone encountering the threat. E.g., "Anjali, a project manager, got an 'urgent' email from her 'CEO'..."]
-The mistake was simple: [Explain the psychological trap in one sentence].
-This is a classic case of [Topic Name], and it works by exploiting our natural instinct to [e.g., be helpful / act on urgency].
-How do you avoid this trap?
-- **Always Verify:** [Explain how].
-- **Look for Red Flags:** [List 2 simple red flags].
-- **When in Doubt, Don't:** [Explain the safe action].
-One small moment of caution can prevent a major crisis.
-#CyberSecurity #${topic.replace(/_/g, '')} #CaseStudy`;
-                            }
-                        }
+                        setStatus('✍️ Writing your blockbuster...');
+                        const storytellerPrompt = `Act as a master storyteller. Write a short, immersive, and dramatic micro-story based on these details:\n- **Topic:** "${topicDetails.title}"\n- **Character:** ${storyAngle.character}\n- **Plot:** ${storyAngle.plot}\nTONE: Cinematic and simple English, with a clear Indian setting and context.\n**IMPORTANT:** Write a seamless story. DO NOT use structural labels. The story must flow naturally and conclude with a simple, powerful moral. Start with a title like "**${topicDetails.title}: A Micro-Story** 🎬". #CyberSecurity #Storytelling`;
+                        post = await callGemini(storytellerPrompt, apiKey);
+                    } else {
                         post = await callGemini(postPrompt, apiKey);
                     }
 
-                    const cleanedPost = post
-                        .replace(/\*\*/g, '') // Remove double asterisks used for bolding
-                        .replace(/\*/g, '')   // Remove single asterisks for lists/emphasis
-                        .trim();
-
+                    const cleanedPost = post.replace(/\*\*|\*/g, '').trim();
                     setGeneratedText(cleanedPost);
 
-                    setStatus('🎨 Composing thought-provoking visuals...');
-                    let visualPlan;
-
-                    const visualPlanContext = `Based on the following social media post, create a compelling visual summary. Post: "${cleanedPost}"`;
-
-                    if (isCarousel) {
-                        const planText = await callGemini(`${visualPlanContext} Create a 3-slide carousel. The text must be extremely short, punchy, and directly related to the post's main points. Return ONLY JSON:
-{"slides":[{"title":"2-3 words","text":"4-6 words"},{"title":"2-3 words","text":"4-6 words"},{"title":"2-3 words","text":"4-6 words"}]}
-Make it visually memorable and logically connected to the post.`, apiKey);
-                        try {
-                            visualPlan = JSON.parse(planText.replace(/\`\`\`json/g,'').replace(/\`\`\`/g,'').trim());
-                        } catch {
-                            visualPlan = {slides:[
-                                {title:"Threats Evolve",text:"So should your defense"},
-                                {title:"Doubt Everything",text:"Verify before you trust"},
-                                {title:"You Are The Shield",text:"Your actions matter most"}
-                            ]};
-                        }
-                    } else {
-                        const planText = await callGemini(`${visualPlanContext} Create a single visual concept. The title and points must summarize the most critical advice from the post. Return ONLY JSON:
-{"title":"2-4 POWERFUL words","points":["4-6 impactful words","4-6 impactful words","4-6 impactful words"]}
-Make it memorable and directly relevant.`, apiKey);
-                        try {
-                            visualPlan = JSON.parse(planText.replace(/\`\`\`json/g,'').replace(/\`\`\`/g,'').trim());
-                        } catch {
-                            visualPlan = {title:"DEFEND YOUR DIGITAL",points:["Think before the click","Strong passkeys are essential","MFA is not optional"]};
-                        }
-                    }
-
-                    const slides = isCarousel ? visualPlan.slides : [visualPlan];
+                    setStatus('🎨 Composing visual storyboard...');
                     let images = [];
-
+                    
                     if (backgroundType === 'canvas') {
                         setStatus('🎨 Creating artistic backgrounds...');
-                        images = slides.map((_, i) => generateCanvas(topicDetails.colors, uniqueSeed + i*1000));
+                        images = [generateCanvas(topicDetails.colors, Date.now())];
                     } else {
-                        const indianPrompts = getIndianImagePrompts(topic);
-                        const statusMessage = backgroundType === 'imagen4' ? '📸 Generating cinematic photos (30-45s)...' : '🖼️ Generating high-quality images (20-30s)...';
-                        setStatus(statusMessage);
-
-                        const imagePromises = slides.map((_, i) => {
-                            const promptIndex = (uniqueSeed + i) % indianPrompts.length;
-                            return generateHighQualityImage(indianPrompts[promptIndex], apiKey);
-                        });
-                        const results = await Promise.all(imagePromises);
-                        images = results.map((img, i) => img || generateCanvas(topicDetails.colors, uniqueSeed + i*1000));
+                        let imageGenPrompt, statusMsg;
+                        if (backgroundType === 'comic') {
+                            setStatus('🎬 Directing comic art...');
+                            const comicContext = `You are an AI art director. Read this text: "${cleanedPost}". Write a single, detailed prompt for an AI image generator to create a 3-panel comic strip that tells this story visually. The characters must be visibly **Indian**. Each panel should have a clean, designated space for text. Describe the scene, character, and action for each panel. The image must not contain any text or speech bubbles itself. Style: Modern, clean comic art, bold inks, cinematic colors.`;
+                            imageGenPrompt = await callGemini(comicContext, apiKey);
+                            statusMsg = '✍️ Illustrating contextual comic...';
+                        } else { // cinematic
+                            setStatus('🎬 Directing cinematic infographic...');
+                            const cinematicContext = `You are an AI art director. Read this text: "${cleanedPost}". It contains key points. Write a single, detailed prompt for an AI image generator to create a professional 3-panel triptych infographic. The visual must feature **Indian people and settings**. Each panel should visually represent one of the key points, leaving a clean, designated area within each panel for text. Describe the iconography, scene, and mood. The image must not contain any text itself. Style: Cinematic, moody lighting, professional, high-tech aesthetic.`;
+                            imageGenPrompt = await callGemini(cinematicContext, apiKey);
+                            statusMsg = '📸 Generating contextual infographic...';
+                        }
+                        setStatus(statusMsg);
+                        const generatedImage = await generateHighQualityImage(imageGenPrompt, apiKey);
+                        images = [generatedImage || generateCanvas(topicDetails.colors, Date.now())];
                     }
-
-                    setVisualContent({ images, plan: visualPlan, isCarousel });
+                    
+                    setVisualContent({ images, text: cleanedPost });
                     setStatus('✅ Insight ready!');
-                    setGenerationCount(prev => prev + 1);
 
                 } catch (err) {
                     console.error(err);
@@ -528,112 +240,41 @@ Make it memorable and directly relevant.`, apiKey);
 
             const handleDownloadImage = async () => {
                 if (!visualContent || !visualContent.images || visualContent.images.length === 0) return;
-
                 setDownloadSuccess('Preparing...');
-
                 try {
                     const canvas = document.createElement('canvas');
-                    canvas.width = 1080;
-                    canvas.height = 1080;
+                    canvas.width = 1080; canvas.height = 1080;
                     const ctx = canvas.getContext('2d');
-
-                    const { images, plan, isCarousel } = visualContent;
-                    const currentImageSrc = images[currentSlide];
-                    const currentPlan = isCarousel ? plan.slides[currentSlide] : plan;
-                    const currentFontStyle = fontStyles[fontStyle];
-
+                    const { images } = visualContent;
+                    
                     const img = new Image();
                     img.crossOrigin = 'anonymous';
-                    img.src = currentImageSrc;
-                    await new Promise((resolve, reject) => {
-                        img.onload = resolve;
-                        img.onerror = (e) => reject(new Error("Image failed to load for download canvas."));
-                    });
+                    img.src = images[0];
+                    await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; });
                     
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                    const gradient = ctx.createLinearGradient(0, canvas.height, 0, canvas.height / 2);
-                    gradient.addColorStop(0, 'rgba(0,0,0,0.9)');
-                    gradient.addColorStop(0.7, 'rgba(0,0,0,0.4)');
-                    gradient.addColorStop(1, 'rgba(0,0,0,0)');
-                    ctx.fillStyle = gradient;
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                    ctx.fillStyle = 'white';
-                    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
-                    ctx.shadowBlur = 10;
-                    ctx.shadowOffsetY = 2;
-
-                    const padding = 80;
-                    const contentWidth = canvas.width - (padding * 2);
-
-                    const wrapText = (context, text, x, y, maxWidth, lineHeight) => {
-                        const words = text.split(' ');
-                        let line = '';
-                        let currentY = y;
-                        for (let n = 0; n < words.length; n++) {
-                            const testLine = line + words[n] + ' ';
-                            const metrics = context.measureText(testLine);
-                            if (metrics.width > maxWidth && n > 0) {
-                                context.fillText(line, x, currentY);
-                                line = words[n] + ' ';
-                                currentY += lineHeight;
-                            } else {
-                                line = testLine;
-                            }
-                        }
-                        context.fillText(line, x, currentY);
-                        return currentY - y + lineHeight;
-                    };
-
-
-                    if (isCarousel) {
-                        ctx.font = `600 52px ${currentFontStyle.font}`;
-                        const textHeight = wrapText(ctx, currentPlan.text, padding, canvas.height - padding - 62, contentWidth, 62);
-                        
-                        ctx.font = `${currentFontStyle.weight} 95px ${currentFontStyle.font}`;
-                        wrapText(ctx, currentPlan.title, padding, canvas.height - padding - textHeight - 40, contentWidth, 105);
-                    } else {
-                        const points = currentPlan.points || [];
-                        let yPos = canvas.height - padding;
-
-                        ctx.font = `600 42px ${currentFontStyle.font}`;
-                        [...points].reverse().forEach(point => {
-                            const pointText = `✓  ${point}`;
-                            const textHeight = wrapText(ctx, pointText, padding, yPos - 42, contentWidth, 50);
-                            yPos -= (textHeight + 20); 
-                        });
-                        
-                        yPos -= 40;
-
-                        ctx.font = `${currentFontStyle.weight} 90px ${currentFontStyle.font}`;
-                        wrapText(ctx, currentPlan.title, padding, yPos - 100, contentWidth, 100);
-                    }
-
+                    
                     const link = document.createElement('a');
-                    const topicName = cybersecurityTopics[topic].title.replace(/[^a-z0,9]/gi, '_');
-                    link.download = `CyberGuard_${topicName}_${Date.now()}.png`;
+                    link.download = `CyberGuard_${topic.replace(/_/g, '')}_${Date.now()}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                     setDownloadSuccess('Downloaded!');
                     setTimeout(() => setDownloadSuccess(''), 2000);
                 } catch (e) {
-                    console.error("Failed to create image for download:", e);
-                    setError('Download failed. Please try another background.');
+                    console.error("Download failed:", e);
+                    setError('Download failed.');
                     setDownloadSuccess('');
                 }
             };
             
-            const availableTextLengths = contentType === 'technical' 
-                ? Object.fromEntries(Object.entries(textLengths).filter(([k]) => k !== 'bollywood')) 
-                : textLengths;
+            const availableTextLengths = contentType === 'technical' ? technicalTextLengths : genericTextLengths;
 
             return (
                 <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen flex flex-col xl:flex-row p-4 sm:p-6 gap-4 sm:gap-6">
                     <div className="xl:w-1/3 bg-gray-800/90 backdrop-blur p-4 sm:p-6 rounded-2xl shadow-2xl border border-gray-700/50 flex flex-col gap-3 sm:gap-4 max-h-screen overflow-y-auto">
                         <div className="border-b border-cyan-500/30 pb-3 sm:pb-4">
                             <h1 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">CyberGuard AI</h1>
-                            <p className="text-gray-400 text-xs sm:text-sm mt-1">Simple, Impactful Cybersecurity Content</p>
+                            <p className="text-gray-400 text-xs sm:text-sm mt-1">The Ultimate Edition</p>
                         </div>
 
                         <div className="flex flex-col gap-2">
@@ -650,22 +291,6 @@ Make it memorable and directly relevant.`, apiKey);
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                            <div>
-                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Platform</label>
-                                <div className="flex bg-gray-700/50 rounded-lg p-1">
-                                    <button onClick={()=>setPlatform('linkedin')} className={`w-1/2 p-1.5 sm:p-2 rounded-md text-xs sm:text-sm font-semibold transition ${platform==='linkedin'?'bg-cyan-500 text-white shadow-lg':'hover:bg-gray-600'}`}>LinkedIn</button>
-                                    <button onClick={()=>setPlatform('instagram')} className={`w-1/2 p-1.5 sm:p-2 rounded-md text-xs sm:text-sm font-semibold transition ${platform==='instagram'?'bg-cyan-500 text-white shadow-lg':'hover:bg-gray-600'}`}>Instagram</button>
-                                </div>
-                            </div>
-                            <div>
-                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Visual Format</label>
-                                <select value={format} onChange={(e)=>setFormat(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
-                                    {platformFormats[platform].map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
-                                </select>
-                            </div>
-                        </div>
-
                         {platform === 'linkedin' && (
                             <div>
                                 <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Content Format</label>
@@ -676,42 +301,19 @@ Make it memorable and directly relevant.`, apiKey);
                         )}
 
                         <div>
-                            <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Cybersecurity Topic ({Object.keys(cybersecurityTopics).length} available)</label>
+                            <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Cybersecurity Topic</label>
                             <select value={topic} onChange={(e)=>setTopic(e.target.value)} className="w-full p-2 sm:p-3 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
                                 {Object.entries(cybersecurityTopics).map(([k,v])=><option key={k} value={k}>{v.emoji} {v.title}</option>)}
                             </select>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                            <div>
-                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Target Audience</label>
-                                <select value={audience} onChange={(e)=>setAudience(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
-                                    {Object.entries(targetAudiences).map(([k,v])=><option key={k} value={k}>{v}</option>)}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Tone of Voice</label>
-                                <select value={tone} onChange={(e)=>setTone(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
-                                    {Object.entries(tones).map(([k,v])=><option key={k} value={k}>{v}</option>)}
-                                </select>
-                            </div>
+                        <div>
+                            <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Visual Style</label>
+                            <select value={backgroundType} onChange={(e)=>setBackgroundType(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
+                                {Object.entries(backgroundTypes).map(([k,v])=><option key={k} value={k}>{v}</option>)}
+                            </select>
                         </div>
-
-                        <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                            <div>
-                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Visual Style</label>
-                                <select value={backgroundType} onChange={(e)=>setBackgroundType(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
-                                    {Object.entries(backgroundTypes).map(([k,v])=><option key={k} value={k}>{v}</option>)}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-xs sm:text-sm font-medium text-gray-300 mb-2 block">Font Style</label>
-                                <select value={fontStyle} onChange={(e)=>setFontStyle(e.target.value)} className="w-full p-1.5 sm:p-2 bg-gray-700/80 border border-gray-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-cyan-500">
-                                    {Object.entries(fontStyles).map(([k,v])=><option key={k} value={k}>{v.name}</option>)}
-                                </select>
-                            </div>
-                        </div>
-
+                        
                         <div className="mt-2 pt-3 sm:pt-4 border-t border-gray-700/50">
                             <button onClick={handleGenerate} disabled={isLoading} className="w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-700 text-white font-bold py-2.5 sm:py-3 px-4 rounded-lg text-sm sm:text-base transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 shadow-xl">
                                 {isLoading ? <Spinner/> : '✨'}
@@ -735,8 +337,8 @@ Make it memorable and directly relevant.`, apiKey);
                                 <div className="lg:w-1/2 bg-gray-800/90 backdrop-blur p-4 sm:p-6 rounded-2xl shadow-2xl border border-gray-700/50 flex flex-col">
                                     <div className="flex justify-between items-center border-b border-gray-700/50 pb-3 mb-4">
                                         <h2 className="text-base sm:text-lg font-bold text-gray-200">
-                                            {platform === 'instagram' ? '📱 Caption' : '📝 Post Content'}
-                                            {platform === 'linkedin' && <span className="text-xs text-gray-500 ml-2">({textLengths[textLength].name})</span>}
+                                            📝 Post Content
+                                            {platform === 'linkedin' && <span className="text-xs text-gray-500 ml-2">({(availableTextLengths[textLength] || {}).name})</span>}
                                         </h2>
                                         <button onClick={handleCopy} disabled={!generatedText} className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm disabled:opacity-50 transition">
                                             {copySuccess || '📋 Copy'}
@@ -745,9 +347,8 @@ Make it memorable and directly relevant.`, apiKey);
                                     <div className="flex-grow overflow-y-auto text-gray-300 whitespace-pre-wrap text-xs sm:text-sm leading-relaxed">
                                         {generatedText || (
                                             <div className="flex flex-col items-center justify-center h-full text-gray-500 text-xs sm:text-sm text-center">
-                                                <p className="text-cyan-400 font-semibold mb-2">🎬 Simple, Impactful & Memorable Content</p>
-                                                <p>Your engaging post will appear here.</p>
-                                                <p className="text-xs text-gray-600 mt-1">Choose your format, including Bollywood Storytelling!</p>
+                                                <p className="text-cyan-400 font-semibold mb-2">🎬 Your Ultimate Content Awaits</p>
+                                                <p>Select your options and generate truly unique, thought-provoking content.</p>
                                             </div>
                                         )}
                                     </div>
@@ -755,9 +356,8 @@ Make it memorable and directly relevant.`, apiKey);
 
                                 <div className="lg:w-1/2 bg-gray-800/90 backdrop-blur p-4 sm:p-6 rounded-2xl shadow-2xl border border-gray-700/50 flex flex-col">
                                     <div className="flex justify-between items-center border-b border-gray-700/50 pb-3 mb-4">
-                                        <h2 className="text-base sm:text-lg font-bold text-gray-200">🎨 Professional Visual</h2>
+                                        <h2 className="text-base sm:text-lg font-bold text-gray-200">🎨 Visual Storyboard</h2>
                                         <div className="flex gap-2 items-center">
-                                            <span className="text-xs text-gray-400">{fontStyles[fontStyle].name}</span>
                                             {visualContent && (
                                                 <button onClick={handleDownloadImage} disabled={downloadSuccess === 'Preparing...'} className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-1 px-2 rounded text-xs transition disabled:opacity-50">
                                                     {downloadSuccess || '⬇ Download'}
@@ -766,15 +366,10 @@ Make it memorable and directly relevant.`, apiKey);
                                         </div>
                                     </div>
                                     <div className="flex-grow aspect-square bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden shadow-inner">
-                                        {visualContent ? <VisualDisplay 
-                                            content={visualContent} 
-                                            fontStyle={fontStyles[fontStyle]}
-                                            currentSlide={currentSlide}
-                                            setCurrentSlide={setCurrentSlide}
-                                        /> : (
+                                        {visualContent ? <img src={visualContent.images[0]} alt="Generated Visual" className="w-full h-full object-cover"/> : (
                                             <div className="text-center text-gray-500 text-xs sm:text-sm">
                                                 <p className="text-cyan-400 font-semibold mb-2">🖼️ Visual Preview</p>
-                                                <p className="text-xs text-gray-600">High-concept visuals will be generated here.</p>
+                                                <p className="text-xs text-gray-600">Your custom infographic or comic will appear here.</p>
                                             </div>
                                         )}
                                     </div>
@@ -785,57 +380,6 @@ Make it memorable and directly relevant.`, apiKey);
                 </div>
             );
         }
-
-        const VisualDisplay = ({content, fontStyle, currentSlide, setCurrentSlide}) => {
-            if (!content) return null;
-
-            const {images, plan, isCarousel} = content;
-            const slides = isCarousel ? plan.slides : [plan];
-
-            return (
-                <div className="relative w-full h-full bg-black">
-                    {images.map((image, i) => {
-                        const slide = slides[i];
-                        const isActive = i === currentSlide;
-                        return (
-                            <div key={i} className={`absolute inset-0 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-                                <img src={image} alt={`Slide ${i+1}`} className="w-full h-full object-cover"/>
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent" />
-                                <div className="absolute inset-0 flex flex-col justify-end p-8 sm:p-10 text-white" style={{textShadow: '0px 2px 10px rgba(0,0,0,0.8)'}}>
-                                    {isCarousel ? (
-                                        <div className="mb-10">
-                                            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-3 leading-tight" style={{fontFamily:fontStyle.font,fontWeight:fontStyle.weight}}>{slide.title}</h2>
-                                            <p className="text-xl sm:text-2xl md:text-3xl font-semibold" style={{fontFamily:fontStyle.font}}>{slide.text}</p>
-                                        </div>
-                                    ) : (
-                                         <div className="mb-6">
-                                            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-5 leading-tight" style={{fontFamily:fontStyle.font,fontWeight:fontStyle.weight}}>{slide.title}</h2>
-                                            <ul className="space-y-3">
-                                                {slide.points && slide.points.map((p,pi)=>(
-                                                    <li key={pi} className="flex items-center text-lg sm:text-xl md:text-2xl">
-                                                        <span className="text-cyan-400 mr-3 text-2xl sm:text-3xl flex-shrink-0">✓</span>
-                                                        <span className="font-semibold" style={{fontFamily:fontStyle.font}}>{p}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        );
-                    })}
-                    {isCarousel && slides.length > 1 && (
-                        <>
-                            <button onClick={()=>setCurrentSlide((p)=>(p-1+slides.length)%slides.length)} className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 sm:p-3 rounded-full z-10 transition">←</button>
-                            <button onClick={()=>setCurrentSlide((p)=>(p+1)%slides.length)} className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 sm:p-3 rounded-full z-10 transition">→</button>
-                            <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2 z-10">
-                                {slides.map((_,i)=><div key={i} onClick={()=>setCurrentSlide(i)} className={`h-2 sm:h-3 rounded-full cursor-pointer transition-all ${i===currentSlide?'bg-white w-8 sm:w-10':'bg-white/50 w-2 sm:w-3'}`}/>)}
-                            </div>
-                        </>
-                    )}
-                </div>
-            );
-        };
 
         const Spinner = ({size='sm'}) => (
             <svg className={`animate-spin ${size==='sm'?'h-5 w-5':'h-10 w-10'} text-white`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
